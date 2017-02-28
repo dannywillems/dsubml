@@ -1,0 +1,4 @@
+let x = lambda (x : { A : Nothing .. Any }) (lambda (y : x.A) y) in x;;
+
+let x = lambda (x : { A : Nothing .. Any }) (lambda (x : x.A) x) in x;;
+

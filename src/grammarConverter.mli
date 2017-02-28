@@ -1,6 +1,6 @@
-exception AlreadyInEnvironment of (string * Env.env)
+exception AlreadyInEnvironment of (string * Env.Map.env)
 
-exception NotInEnvironment of (string * Env.env)
+exception UnboundVariable of (string * Env.Map.env)
 
 val nominal_term_of_raw_term : Grammar.raw_term -> Grammar.nominal_term
 

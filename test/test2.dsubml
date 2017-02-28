@@ -1,0 +1,1 @@
+let x = lambda (y : (forall (y : {A : Nothing .. Any } ) : y.A)) y;;

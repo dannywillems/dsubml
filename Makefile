@@ -11,7 +11,8 @@ SRC_DIR = src
 
 OCAMLBUILD := \
   ocamlbuild \
-  -use-ocamlfind
+  -use-ocamlfind \
+  -classic-display
 
 .PHONY: all test clean
 
