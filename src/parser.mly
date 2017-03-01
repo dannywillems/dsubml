@@ -33,8 +33,9 @@ rule_term:
   t = rule_term ;
   IN ;
   u = rule_term {
-          Grammar.TermLet(x, t, u)
+          Grammar.TermLet(t,(x, u))
         }
+
 | LEFT_PARENT ;
   t = rule_term ;
   RIGHT_PARENT { t }
@@ -54,7 +55,7 @@ rule_value:
   typ = rule_typ ;
   RIGHT_PARENT ;
   t = rule_term {
-          Grammar.TermAbstraction(id, typ, t)
+          Grammar.TermAbstraction(typ, (id, t))
         }
 
 rule_typ:
@@ -82,5 +83,5 @@ rule_typ:
   s = rule_typ ;
   RIGHT_PARENT ;
   t = rule_typ {
-          Grammar.TypeDependentFunction(x, s, t)
+          Grammar.TypeDependentFunction(s, (x, t))
         }

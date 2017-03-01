@@ -12,7 +12,10 @@ SRC_DIR = src
 OCAMLBUILD := \
   ocamlbuild \
   -use-ocamlfind \
-  -classic-display
+  -classic-display \
+  -plugin-tag 'package(cppo_ocamlbuild)' \
+  -tag "cppo_I($(ALPHALIB))" \
+  -tag "cppo_I($(PWD))"
 
 .PHONY: all test clean
 

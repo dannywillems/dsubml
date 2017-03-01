@@ -1,11 +1,11 @@
 let rec eval_file f =
   try
-    let term = Parser.top_level Lexer.prog f in
-    let n_term = GrammarConverter.nominal_term_of_raw_term term in
+    let raw_term = Parser.top_level Lexer.prog f in
+    let nominal_term = Grammar.import_term AlphaLib.KitImport.empty raw_term in
     print_endline "Raw term";
-    Print.raw_term term;
+    Print.raw_term raw_term;
     print_endline "\nPrint nominal_term";
-    Print.nominal_term n_term;
+    Print.raw_term @@ Grammar.show_term nominal_term;
     print_endline "";
     eval_file f
   with End_of_file -> ()
