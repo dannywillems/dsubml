@@ -16,12 +16,24 @@
 %token IN
 %token EOF
 
+(* Only for testing. It's not a « real » token for the language *)
+%token SUBTYPE
+
 %start <Grammar.raw_term> top_level
+%start <Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
 top_level:
 | t = rule_term ; SEMICOLON ; SEMICOLON { t }
 | EOF { raise End_of_file }
+
+(* A rule which can be used to read a file containing only types. Useful to try
+   subtyping algorithm.
+*)
+top_level_subtype:
+| s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (s, t) }
+| EOF { raise End_of_file }
+
 
 rule_term:
 | id = VAR { Grammar.TermVariable id }

@@ -27,6 +27,9 @@ rule prog = parse
       comment lexbuf;
       prog lexbuf
     }
+  (* Only to test subtyping algorithm. It's not in the language *)
+  | "<:" { Parser.SUBTYPE }
+
   | ':' { Parser.COLON}
   | '.' { Parser.DOT }
   | '=' { Parser.EQUAL }
