@@ -20,3 +20,5 @@ val empty : unit -> context
 val add : key -> t -> context -> context
 
 val is_empty : context -> bool
+
+val find : key -> context -> t

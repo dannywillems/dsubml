@@ -30,4 +30,7 @@ let add x n context =
 
 let is_empty context =
   ContextModule.is_empty context
+
+let find x context =
+  ContextModule.find x context
 (* ------------------------------------------------- *)
