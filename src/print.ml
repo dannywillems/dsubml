@@ -46,3 +46,6 @@ and string_of_raw_typ t = match t with
 
 let raw_term t =
   Printf.printf "%s" (string_of_raw_term t)
+
+let raw_typ t =
+  Printf.printf "%s" (string_of_raw_typ t)
