@@ -1,0 +1,47 @@
+(* ---------------------------------------- *)
+(* Basic *)
+Nothing <: Any;;
+
+Any <: Nothing;;
+(* ---------------------------------------- *)
+
+(* ---------------------------------------- *)
+(* Structural subtyping. *)
+(*
+  It must return true. It's for testing structural equality with Grammar.equiv_typ.
+  REFL must be used in this case, not TYP <: TYP because REFL is before TYP <:
+  TYP in the pattern matching. It is reasonable to suppose it.
+*)
+{A : Nothing .. Any} <: {A : Nothing .. Any};;
+
+(*
+  It must return true. It's for testing structural equality with Grammar.equiv_typ
+*)
+for all(y : Nothing) Any <: for all(y : Nothing) Any;;
+
+(* Try with nested parentheses on one side and both sides. *)
+for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
+
+(for all(x : Nothing) Any) <: for all(y : Nothing) Any;;
+
+(for all(x : Nothing) Any) <: (for all(y : Nothing) Any);;
+
+(* Two for all. True *)
+(for all(y : {A : Nothing .. Any}) y.A) <: (for all(y : {A : Nothing .. Any}) y.A);;
+
+(for all(y : {A : Nothing .. Any}) y.A) <: (for all(x : {A : Nothing .. Any}) x.A);;
+(* ---------------------------------------- *)
+
+(* ---------------------------------------- *)
+(* ALL <: ALL *)
+(* The right side is Nothing, so it must return false. Both sides use the variable y. *)
+(for all(y : {A : Nothing .. Any}) y.A) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
+
+(* The right side is Nothing, so it must return false. Different variables are used. *)
+(for all(x : {A : Nothing .. Any}) x.A) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
+(* ---------------------------------------- *)
+
+(* ---------------------------------------- *)
+(* TYP <: TYP *)
+{ A : {B : Nothing .. Any} .. Any } <: { A : Nothing .. Any };;
+(* ---------------------------------------- *)
