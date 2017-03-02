@@ -88,6 +88,10 @@ rule_typ:
   l = LABEL {
           Grammar.TypeProjection(x, l)
         }
+| t = rule_typ_forall { t }
+
+(* Allow to add extra parentheses around for all types *)
+rule_typ_forall:
 | FORALL ;
   LEFT_PARENT ;
   x = VAR ;
@@ -97,3 +101,6 @@ rule_typ:
   t = rule_typ {
           Grammar.TypeDependentFunction(s, (x, t))
         }
+| LEFT_PARENT ;
+  t = rule_typ_forall
+  RIGHT_PARENT { t }
