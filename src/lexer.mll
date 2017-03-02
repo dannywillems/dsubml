@@ -10,6 +10,10 @@
 
 let abstraction = "lambda"
 let forall = "forall"
+let top = "Any"
+let bottom = "Nothing"
+let let_ = "let"
+let in_ = "in"
 
 let white = [' ' '\t' '\r']
 let newline = ['\n']
@@ -26,12 +30,12 @@ rule prog = parse
   | '}' { Parser.RIGHT_BRACKET }
   | '(' { Parser.LEFT_PARENT }
   | ')' { Parser.RIGHT_PARENT }
-  | "Any" { Parser.TOP_TYPE }
-  | "Nothing" { Parser.BOTTOM_TYPE }
+  | top { Parser.TOP_TYPE }
+  | bottom { Parser.BOTTOM_TYPE }
   | ['A' - 'Z']+ as l { Parser.LABEL l }
   | ';' { Parser.SEMICOLON }
-  | "let" { Parser.LET }
-  | "in" { Parser.IN }
+  | let_ { Parser.LET }
+  | in_ { Parser.IN }
   | abstraction { Parser.ABSTRACTION }
   | ['a' - 'z']+ as id { Parser.VAR id }
   | forall { Parser.FORALL }

@@ -15,8 +15,6 @@ let () =
   if argc > 1
   then
     let f = open_in (Array.get Sys.argv 1) in
-    eval_file (Lexing.from_channel f);
-    close_in f
+    (eval_file (Lexing.from_channel f); close_in f)
   else
-    print_endline "You must give a file"
-
+    (print_endline "You must give a file"; exit 1)
