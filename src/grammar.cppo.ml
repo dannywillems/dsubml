@@ -4,18 +4,28 @@ open BindingForms
 type type_tag = string[@opaque]
 
 and ('bn, 'fn) term =
+  (* x *)
   | TermVariable of 'fn
+  (* { A = T } *)
   | TermTypeTag of type_tag * ('bn, 'fn) typ
+  (* λ(x : S) t *)
   | TermAbstraction of
       ('bn, 'fn) typ * ('bn, ('bn, 'fn) term) abs
+  (* x y *)
   | TermVarApplication of 'fn * 'fn
+  (* let x = t in t *)
   | TermLet of ('bn, 'fn) term * ('bn, ('bn, 'fn) term) abs
 
 and ('bn, 'fn) typ =
+  (* Top type : ⊤ *)
   | TypeTop
+  (* Bottom type : ⟂ *)
   | TypeBottom
+  (* { L : S..T } *)
   | TypeDeclaration of type_tag * ('bn, 'fn) typ * ('bn, 'fn) typ
+  (* x.L *)
   | TypeProjection of 'fn * type_tag
+  (* ∀(x : S) T *)
   | TypeDependentFunction of
       ('bn, 'fn) typ *
       ('bn, ('bn, 'fn) typ) abs
