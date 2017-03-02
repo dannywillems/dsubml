@@ -1,4 +1,5 @@
 {
+  (* The position in the buffer is set to the next line *)
   let next_line lexbuf =
     let pos = lexbuf.Lexing.lex_curr_p in
     lexbuf.Lexing.lex_curr_p <-
@@ -37,15 +38,15 @@ rule prog = parse
   | '}' { Parser.RIGHT_BRACKET }
   | '(' { Parser.LEFT_PARENT }
   | ')' { Parser.RIGHT_PARENT }
+  | ';' { Parser.SEMICOLON }
   | top { Parser.TOP_TYPE }
   | bottom { Parser.BOTTOM_TYPE }
-  | ['A' - 'Z']+ as l { Parser.LABEL l }
-  | ';' { Parser.SEMICOLON }
+  | "for all" as l { Parser.FORALL }
   | let_ { Parser.LET }
   | in_ { Parser.IN }
   | abstraction { Parser.ABSTRACTION }
+  | ['A' - 'Z']+ as l { Parser.LABEL l }
   | ['a' - 'z']+ as id { Parser.VAR id }
-  | forall { Parser.FORALL }
   | _ { failwith "Illegal character" }
   | eof { Parser.EOF }
 
