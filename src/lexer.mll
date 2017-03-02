@@ -23,6 +23,10 @@ rule prog = parse
   | newline { next_line lexbuf;
               prog lexbuf
             }
+  | "(*" {
+      comment lexbuf;
+      prog lexbuf
+    }
   | ':' { Parser.COLON}
   | '.' { Parser.DOT }
   | '=' { Parser.EQUAL }
@@ -41,3 +45,8 @@ rule prog = parse
   | forall { Parser.FORALL }
   | _ { failwith "Illegal character" }
   | eof { Parser.EOF }
+
+and comment = parse
+  | "*)" { () }
+  | eof { failwith "Unterminated comment" }
+  | _ { comment lexbuf }
