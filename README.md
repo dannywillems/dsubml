@@ -16,3 +16,16 @@ For example, you can try the subtyping algorithm on the file `test/subtype_simpl
 ```
 ./main.native -f test/subtype_simple.dsubml -a subtype
 ```
+
+
+TODO
+====
+
+## Grammar.
+
+- Add integer, string, char, bool.
+
+## Subtyping.
+
+- Check all results are correct.
+- Add an history to get the derivation tree.
