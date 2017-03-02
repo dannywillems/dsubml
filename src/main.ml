@@ -30,7 +30,8 @@ let success_style = [ANSITerminal.green]
 let print_error lexbuf =
   let pos = lexbuf.Lexing.lex_curr_p in
   Printf.printf
-    "Syntax error %d:%d\n"
+    "Syntax error in %s - %d:%d\n"
+    (!file_name)
     pos.Lexing.pos_lnum
     (pos.Lexing.pos_cnum - pos.Lexing.pos_bol + 1)
 
