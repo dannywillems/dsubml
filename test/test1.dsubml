@@ -1,4 +1,6 @@
+(* An example with two lambda and the second lambda depends on the first variable. *)
 let x = lambda (x : { A : Nothing .. Any }) (lambda (y : x.A) y) in x;;
 
+(* Same than before but we use the same variable name. *)
 let x = lambda (x : { A : Nothing .. Any }) (lambda (x : x.A) x) in x;;
 
