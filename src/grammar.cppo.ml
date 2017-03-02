@@ -38,6 +38,8 @@ and ('bn, 'fn) typ =
 type raw_term = (string, string) term
 type raw_typ = (string, string) typ
 
+type nominal_term = (Atom.t, Atom.t) term
+type nominal_typ = (Atom.t, Atom.t) typ
 
 #include "AlphaLibMacros.cppo.ml"
 __ALL
