@@ -18,6 +18,7 @@ let action_of_string = function
 (* References for arguments *)
 let file_name = ref ""
 let eval_opt = ref ""
+let verbose = ref false
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
@@ -60,9 +61,11 @@ let rec check_subtype f =
   let (raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
-  print_is_subtype raw_s raw_t (Subtype.subtype nominal_s nominal_t);
+  let history, is_subtype = Subtype.subtype nominal_s nominal_t in
+  if !verbose then print_string (DerivationTree.to_string 0 history);
+  print_is_subtype raw_s raw_t is_subtype;
+  print_endline "-------------------------";
   check_subtype f
-
 
 let rec eval_file f =
   let raw_term = Parser.top_level Lexer.prog f in
@@ -79,12 +82,16 @@ let rec eval_file f =
 (* Args stuff *)
 let args_list = [
   ("-f",
-   Arg.String (fun s -> file_name := s),
+   Arg.Set_string file_name,
    "File to read"
   );
   ("-a",
    Arg.Symbol (["eval" ; "subtype"], (fun s -> eval_opt := s)),
    "The action to do"
+  );
+  ("-v",
+   Arg.Set verbose,
+   "Verbose mode"
   )
 ]
 
