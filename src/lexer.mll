@@ -41,7 +41,7 @@ rule prog = parse
   | ';' { Parser.SEMICOLON }
   | top { Parser.TOP_TYPE }
   | bottom { Parser.BOTTOM_TYPE }
-  | "for all" as l { Parser.FORALL }
+  | "for all" { Parser.FORALL }
   | let_ { Parser.LET }
   | in_ { Parser.IN }
   | abstraction { Parser.ABSTRACTION }
