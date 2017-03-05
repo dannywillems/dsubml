@@ -33,4 +33,13 @@ let is_empty context =
 
 let find x context =
   ContextModule.find x context
+
+let string_of_context context =
+  let s = ref "" in
+  ContextModule.iter
+    (fun k v ->
+       s := (!s) ^ (AlphaLib.Atom.show k) ^ " : " ^ (Print.string_of_raw_typ (Grammar.show_typ v)) ^ ", "
+    )
+    context;
+  (!s ^ "∅")
 (* ------------------------------------------------- *)

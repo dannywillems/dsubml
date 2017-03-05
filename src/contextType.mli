@@ -22,3 +22,5 @@ val add : key -> t -> context -> context
 val is_empty : context -> bool
 
 val find : key -> context -> t
+
+val string_of_context : context -> string
