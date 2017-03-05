@@ -8,7 +8,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* TOP *)
   | (_, Grammar.TypeTop) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "TOP";
         env = context;
         s = s;
@@ -18,7 +18,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* BOTTOM *)
   | (Grammar.TypeBottom, _) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "BOTTOM";
         env = context;
         s = s;
@@ -28,7 +28,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* REFL. FIXME α-equality OK? Seems OK but must be more tested. *)
   | (s, t) when (Grammar.equiv_typ s t) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "REFL";
         env = context;
         s = s;
@@ -38,7 +38,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* <: SEL *)
   | (s1, Grammar.TypeProjection(x, label_selected)) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "<: SEL";
         env = context;
         s = s;
@@ -52,7 +52,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* SEL <: *)
   | (Grammar.TypeProjection(x, label_selected), t1) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "SEL <:";
         env = context;
         s = s;
@@ -68,7 +68,7 @@ let rec subtype_internal history context s t = match (s, t) with
      Grammar.TypeDependentFunction(s2, (x2, t2))
     ) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "ALL <: ALL";
         env = context;
         s = s;
@@ -84,7 +84,7 @@ let rec subtype_internal history context s t = match (s, t) with
   (* TYP <: TYP *)
   | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2) ->
     let node_value =
-      let open DerivationTree in {
+      DerivationTree.{
         rule = "TYP <: TYP";
         env = context;
         s = s;
