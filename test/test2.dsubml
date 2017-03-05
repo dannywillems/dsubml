@@ -1,1 +1,2 @@
+(* Test with a forall as type for the parameter. *)
 let x = lambda (y : (forall (y : {A : Nothing .. Any } ) : y.A)) y;;
