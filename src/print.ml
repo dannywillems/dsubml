@@ -49,3 +49,24 @@ let raw_term t =
 
 let raw_typ t =
   Printf.printf "%s" (string_of_raw_typ t)
+
+module Style = struct
+  let string_of_raw_term style t =
+    ANSITerminal.sprintf
+      style
+      "%s"
+      (string_of_raw_term t)
+
+  let string_of_raw_typ style t =
+    ANSITerminal.sprintf
+      style
+      "%s"
+      (string_of_raw_typ t)
+
+  let raw_term style t =
+    ANSITerminal.printf style "%s" (string_of_raw_term style t)
+
+  let raw_typ style t =
+    ANSITerminal.printf style "%s" (string_of_raw_typ style t)
+end
+
