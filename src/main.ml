@@ -1,5 +1,4 @@
-open Subtype
-
+open Typer
 (* ------------------------------------------------- *)
 (* About actions *)
 exception Undefined_action of string
