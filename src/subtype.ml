@@ -41,16 +41,16 @@ let rec subtype_internal history context s t = match (s, t) with
         t = t
     } in
     (DerivationTree.Node (node_value, history), true)
-    (* NOTE: It's not a defined subtyping rule. This rule is added to distinguish
-    the case Γ ⊦ x.A <: y.A. This case must not be handled by REFL because x.A
-    and y.A depends on the environment.
+  (* NOTE: It's not a defined subtyping rule. This rule is added to distinguish
+     the case Γ ⊦ x.A <: y.A. This case must not be handled by REFL because x.A
+     and y.A depends on the environment.
 
-    We call it REFL-TYP.
+     We call it REFL-TYP.
 
-    NOTE: As terms/types are not recursive, the corresponding hypothesis on the
-    variables must be removed from the environment. By the way, as the variable
-    is unique, it doesn't matter.
-    *)
+     NOTE: As terms/types are not recursive, the corresponding hypothesis on the
+     variables must be removed from the environment. By the way, as the variable
+     is unique, it doesn't matter.
+  *)
   | (Grammar.TypeProjection(x1, label_selected1),
      Grammar.TypeProjection(x2, label_selected2)
     ) ->
@@ -88,8 +88,9 @@ let rec subtype_internal history context s t = match (s, t) with
         t = t
     } in
     (* We get the corresponding label, lower bound and upper bound for the given
-    variable x from the environment and we check if s1 and the lower bound are
-    equivalent. *)
+       variable x from the environment and we check if s1 and the lower bound are
+       equivalent.
+    *)
     let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (node_value, history),
@@ -124,7 +125,6 @@ let rec subtype_internal history context s t = match (s, t) with
     let left_derivation_tree, left_is_subtype =
       subtype_internal history context s2 s1
     in
-    let () = print_endline "right" in
     let right_derivation_tree, right_is_subtype =
       subtype_internal history context' t1 t2
     in
