@@ -1,0 +1,17 @@
+(* ---------------------------------------------------------- *)
+(* Very simple example with lambda *)
+lambda(x : Nothing) x;;
+
+lambda(x : Any) x;;
+
+lambda(x : (for all(y : Nothing) Any)) x;;
+(* ---------------------------------------------------------- *)
+
+(* ---------------------------------------------------------- *)
+(* Example with let bindings *)
+let x = lambda(x : Nothing) x in x;;
+
+(* Polymorphic identity *)
+let polymorphic_identity =
+  lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
+in polymorphic_identity;;
