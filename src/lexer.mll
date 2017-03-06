@@ -45,8 +45,8 @@ rule prog = parse
   | let_ { Parser.LET }
   | in_ { Parser.IN }
   | abstraction { Parser.ABSTRACTION }
-  | ['A' - 'Z']+ as l { Parser.LABEL l }
-  | ['a' - 'z']+ as id { Parser.VAR id }
+  | ['A' - 'Z']+ ['a' - 'z' '_' '\'']* as l { Parser.LABEL l }
+  | ['a' - 'z']+ ['a' - 'z' '_' '\'']* as id { Parser.VAR id }
   | _ { failwith "Illegal character" }
   | eof { Parser.EOF }
 
