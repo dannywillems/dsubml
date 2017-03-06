@@ -1,9 +1,5 @@
 exception NotATypeDeclaration of Grammar.nominal_typ
 
-let tuple_of_type_declaration t = match t with
-  | Grammar.TypeDeclaration(l, s, t) -> (l, s, t)
-  | _ -> raise (NotATypeDeclaration t)
-
 let rec subtype_internal history context s t = match (s, t) with
   (* TOP *)
   | (_, Grammar.TypeTop) ->
@@ -58,8 +54,8 @@ let rec subtype_internal history context s t = match (s, t) with
   | (Grammar.TypeProjection(x1, label_selected1),
      Grammar.TypeProjection(x2, label_selected2)
     ) ->
-    let label1, s1, t1 = tuple_of_type_declaration (ContextType.find x1 context) in
-    let label2, s2, t2 = tuple_of_type_declaration (ContextType.find x2 context) in
+    let label1, s1, t1 = TypeUtils.tuple_of_type_declaration (ContextType.find x1 context) in
+    let label2, s2, t2 = TypeUtils.tuple_of_type_declaration (ContextType.find x2 context) in
     (* FIXME: We don't check that selected label are the same than label1 and
     label2 *)
     subtype_internal
@@ -91,7 +87,10 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
-    let (label, s2, t2) = tuple_of_type_declaration (ContextType.find x context) in
+    (* We get the corresponding label, lower bound and upper bound for the given
+    variable x from the environment and we check if s1 and the lower bound are
+    equivalent. *)
+    let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (node_value, history),
       (label == label_selected) && (Grammar.equiv_typ s1 s2)
@@ -105,7 +104,7 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
-    let (label, s2, t2) = tuple_of_type_declaration (ContextType.find x context) in
+    let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (node_value, history),
       (label == label_selected) && (Grammar.equiv_typ t1 t2)
@@ -141,17 +140,3 @@ let rec subtype_internal history context s t = match (s, t) with
 
 let subtype s t =
   subtype_internal [DerivationTree.Empty] (ContextType.empty ()) s t
-
-let type_of_internal context term = match term with
-  (* TODO: VAR *)
-  (* TODO: SUB *)
-  (* TODO: LET *)
-  (* TODO: TYP-I *)
-  (* TODO: ALL-I *)
-  (* TODO: ALL-E *)
-  | Grammar.TermTypeTag(type_tag, t) ->
-    Grammar.TypeDeclaration(type_tag, t, t)
-  | _ -> Grammar.TypeTop
-
-let type_of term =
-  type_of_internal (ContextType.empty ()) term
