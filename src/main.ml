@@ -40,6 +40,7 @@ let print_error lexbuf =
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
+(* Functions for actions *)
 let print_is_subtype s t is_subtype =
   ANSITerminal.printf
     (if is_subtype then success_style else error_style)
@@ -59,7 +60,7 @@ let rec execute action lexbuf =
     print_error lexbuf;
     exit 1
 
-let rec typing f =
+let typing f =
   let raw_t = Parser.top_level Lexer.prog f in
   let nominal_t = Grammar.import_term AlphaLib.KitImport.empty raw_t in
   let type_of_t = Typer.type_of nominal_t in
@@ -72,7 +73,7 @@ let rec typing f =
     "%s\n"
     (Print.string_of_raw_typ (Grammar.show_typ type_of_t))
 
-let rec check_subtype f =
+let check_subtype f =
   let (raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
@@ -81,7 +82,7 @@ let rec check_subtype f =
   print_is_subtype raw_s raw_t is_subtype;
   print_endline "-------------------------"
 
-let rec eval_file f =
+let eval_file f =
   let raw_term = Parser.top_level Lexer.prog f in
   let nominal_term = Grammar.import_term AlphaLib.KitImport.empty raw_term in
   print_endline "Raw term";
