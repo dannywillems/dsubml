@@ -11,6 +11,7 @@ This executable has two parameters: the file and the action.
 Possible actions are:
 - evaluate a list of terms (`eval`).
 - use the subtyping algorithm on types (`subtype`).
+- use the typing algorithm on terms (`typing`).
 
 For example, you can try the subtyping algorithm on the file `test/subtype_simple.dsubml` by using:
 ```
