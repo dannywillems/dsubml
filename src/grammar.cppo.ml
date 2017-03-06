@@ -8,12 +8,12 @@ and ('bn, 'fn) term =
   | TermVariable of 'fn
   (* { A = T } *)
   | TermTypeTag of type_tag * ('bn, 'fn) typ
-  (* λ(x : S) t *)
+  (* λ(x : S) t --> (S, (x, t)) *)
   | TermAbstraction of
       ('bn, 'fn) typ * ('bn, ('bn, 'fn) term) abs
   (* x y *)
   | TermVarApplication of 'fn * 'fn
-  (* let x = t in t *)
+  (* let x = t in u --> (t, (x, u))*)
   | TermLet of ('bn, 'fn) term * ('bn, ('bn, 'fn) term) abs
 
 and ('bn, 'fn) typ =
@@ -21,11 +21,11 @@ and ('bn, 'fn) typ =
   | TypeTop
   (* Bottom type : ⟂ *)
   | TypeBottom
-  (* { L : S..T } *)
+  (* { L : S..T } --> (L, S, T) *)
   | TypeDeclaration of type_tag * ('bn, 'fn) typ * ('bn, 'fn) typ
   (* x.L *)
   | TypeProjection of 'fn * type_tag
-  (* ∀(x : S) T *)
+  (* ∀(x : S) T --> (S, (x, T)) *)
   | TypeDependentFunction of
       ('bn, 'fn) typ *
       ('bn, ('bn, 'fn) typ) abs
