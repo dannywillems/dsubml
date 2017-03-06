@@ -136,6 +136,7 @@ let rec subtype_internal history context s t = match (s, t) with
       ),
       left_is_subtype && right_is_subtype
     )
+  (* TODO: TRANS *)
   | (_, _) -> DerivationTree.Empty, false
 
 let subtype s t =
