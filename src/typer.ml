@@ -1,3 +1,4 @@
+exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 let rec type_of_internal context term = match term with
   (* ALL-I *)
   | Grammar.TermAbstraction(s_typ, (x, t)) ->
@@ -8,7 +9,7 @@ let rec type_of_internal context term = match term with
   | Grammar.TermTypeTag(a, typ) ->
     Grammar.TypeDeclaration(a, typ, typ)
   (* LET *)
-  | Grammar.TermLet(u, (x, t)) ->
+  | Grammar.TermLet(t, (x, u)) ->
     let t_typ = type_of_internal context t in
     (* It implies that x has the type of t, i.e. t_typ *)
     let x_typ = t_typ in
@@ -18,8 +19,20 @@ let rec type_of_internal context term = match term with
   (* VAR *)
   | Grammar.TermVariable x ->
     ContextType.find x context
-  (* ALL-E *)
-  (* | Grammar.TermVarApplication(x, y) -> *)
+  (* ALL-E. TODO --> Need an idea to substitute. *)
+  | Grammar.TermVarApplication(x, y) ->
+    (* Hypothesis, get the corresponding types of x and y *)
+    let type_of_x = ContextType.find x context in
+    let type_of_y = ContextType.find y context in
+    (* Check if x is a dependent function. *)
+    let (s, (x1, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
+    if (Grammar.equiv_typ s type_of_y)
+    then t
+    else raise
+        (TypeMismatch (
+            "ALL-E: x must be of type dependent function", (s, type_of_y)
+          )
+        )
   (* TODO: SUB *)
   | _ -> Grammar.TypeTop
 
