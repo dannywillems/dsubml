@@ -6,10 +6,12 @@ exception Undefined_action of string
 type action =
   | Eval
   | Subtype
+  | Typing
 
 let action_of_string = function
   | "eval" -> Eval
   | "subtype" -> Subtype
+  | "typing" -> Typing
   | s -> raise (Undefined_action s)
 (* ------------------------------------------------- *)
 
@@ -47,14 +49,22 @@ let print_is_subtype s t is_subtype =
     (if is_subtype then "" else " not")
     (Print.string_of_raw_typ t)
 
-let execute action lexbuf =
+let rec execute action lexbuf =
   try
-    action lexbuf
+    action lexbuf;
+    execute action lexbuf
   with
   | End_of_file -> ()
   | Parser.Error ->
     print_error lexbuf;
     exit 1
+
+let rec typing f =
+  let raw_t = Parser.top_level Lexer.prog f in
+  let nominal_t = Grammar.import_term AlphaLib.KitImport.empty raw_t in
+  let type_of_t = Typer.type_of nominal_t in
+  Print.raw_typ (Grammar.show_typ type_of_t);
+  print_endline ""
 
 let rec check_subtype f =
   let (raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
@@ -63,8 +73,7 @@ let rec check_subtype f =
   let history, is_subtype = Subtype.subtype nominal_s nominal_t in
   if !verbose then print_string (DerivationTree.to_string 0 history);
   print_is_subtype raw_s raw_t is_subtype;
-  print_endline "-------------------------";
-  check_subtype f
+  print_endline "-------------------------"
 
 let rec eval_file f =
   let raw_term = Parser.top_level Lexer.prog f in
@@ -73,8 +82,7 @@ let rec eval_file f =
   Print.raw_term raw_term;
   print_endline "\nPrint nominal_term";
   Print.raw_term @@ Grammar.show_term nominal_term;
-  print_endline "";
-  eval_file f
+  print_endline ""
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
@@ -85,7 +93,7 @@ let args_list = [
    "File to read"
   );
   ("-a",
-   Arg.Symbol (["eval" ; "subtype"], (fun s -> eval_opt := s)),
+   Arg.Symbol (["eval" ; "subtype" ; "typing"], (fun s -> eval_opt := s)),
    "The action to do"
   );
   ("-v",
@@ -103,3 +111,4 @@ let () =
   match (action_of_string (!eval_opt)) with
   | Eval -> execute eval_file lexbuf
   | Subtype -> execute check_subtype lexbuf
+  | Typing -> execute typing lexbuf
