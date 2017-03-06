@@ -45,9 +45,6 @@ and ('bn, 'fn) typ =
   }
 ]
 
-let is_value t = match t with
-  | TermTypeTag (_) | TermAbstraction (_) -> true
-  | _ -> false
 
 type raw_term = (string, string) term
 type raw_typ = (string, string) typ
