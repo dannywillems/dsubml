@@ -1,4 +1,4 @@
-DSUBML is an implementation in OCaml of DSUB.
+DSubML is an implementation in OCaml of DSub.
 
 To compile, use
 ```
@@ -24,9 +24,10 @@ TODO
 
 ## Grammar.
 
-- Add integer, string, char, bool.
+[ ] Add integer, string, char, bool.
+[ ] Surface language.
 
 ## Subtyping.
 
-- Check all results are correct.
-- Add an history to get the derivation tree.
+[ ] Check all results are correct.
+[x] Add an history to get the derivation tree.
