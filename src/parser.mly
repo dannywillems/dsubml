@@ -20,6 +20,7 @@
 %token SUBTYPE
 
 %start <Grammar.raw_term> top_level
+%start <Grammar.raw_typ> top_level_type
 %start <Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
@@ -34,6 +35,10 @@ top_level_subtype:
 | s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (s, t) }
 | EOF { raise End_of_file }
 
+(* Read a top level type. *)
+top_level_type:
+| s = rule_typ ; SEMICOLON ; SEMICOLON { s }
+| EOF { raise End_of_file }
 
 rule_term:
 | id = VAR { Grammar.TermVariable id }
