@@ -26,7 +26,7 @@ for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
 
 (for all(x : Nothing) Any) <: (for all(y : Nothing) Any);;
 
-(* Two for all. True *)
+(* Two for all. True. *)
 (for all(y : {A : Nothing .. Any}) y.A) <: (for all(y : {A : Nothing .. Any}) y.A);;
 
 (for all(y : {A : Nothing .. Any}) y.A) <: (for all(x : {A : Nothing .. Any}) x.A);;
@@ -34,10 +34,10 @@ for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
 
 (* ---------------------------------------- *)
 (* ALL <: ALL *)
-(* The right side is Nothing, so it must return false. Both sides use the variable y. *)
+(* The right side is Nothing, so it must return false. Both sides use the variable y. It also implies to use the unofficial case REFL-TYP. *)
 (for all(y : {A : Nothing .. Any}) y.A) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
 
-(* The right side is Nothing, so it must return false. Different variables are used. *)
+(* The right side is Nothing, so it must return false. Different variables are used. It also implies to use the unofficial case REFL-TYP. *)
 (for all(x : {A : Nothing .. Any}) x.A) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
 (* ---------------------------------------- *)
 
@@ -45,3 +45,5 @@ for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
 (* TYP <: TYP *)
 { A : {B : Nothing .. Any} .. Any } <: { A : Nothing .. Any };;
 (* ---------------------------------------- *)
+
+(for all(x : Nothing) (for all(y : Nothing) Any)) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
