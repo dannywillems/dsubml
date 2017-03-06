@@ -63,8 +63,14 @@ let rec typing f =
   let raw_t = Parser.top_level Lexer.prog f in
   let nominal_t = Grammar.import_term AlphaLib.KitImport.empty raw_t in
   let type_of_t = Typer.type_of nominal_t in
-  Print.raw_typ (Grammar.show_typ type_of_t);
-  print_endline ""
+  ANSITerminal.print_string
+    [ANSITerminal.cyan]
+    (Print.string_of_raw_term raw_t);
+  print_string " : ";
+  ANSITerminal.printf
+    [ANSITerminal.blue]
+    "%s\n"
+    (Print.string_of_raw_typ (Grammar.show_typ type_of_t))
 
 let rec check_subtype f =
   let (raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
