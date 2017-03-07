@@ -1,4 +1,4 @@
-type 'a node_value = {
+type 'a subtyping_node = {
   rule: string;
   env : ContextType.context;
   s : 'a;
@@ -7,7 +7,7 @@ type 'a node_value = {
 
 type 'a t =
   | Empty
-  | Node of 'a node_value * 'a t list
+  | Node of 'a subtyping_node * 'a t list
 
 let rec ( ^* ) s n = match n with
   | 0 -> ""
@@ -15,7 +15,7 @@ let rec ( ^* ) s n = match n with
   | n when n > 0 -> s ^ (s ^* (n - 1))
   | _ -> s
 
-let rec to_string level t = match t with
+let rec string_of_subtyping_derivation_tree level t = match t with
   | Empty -> ""
   | Node (v, children) ->
     Printf.sprintf
@@ -25,4 +25,4 @@ let rec to_string level t = match t with
       (ContextType.string_of_context v.env)
       (Print.Style.string_of_raw_typ [ANSITerminal.cyan] (Grammar.show_typ v.s))
       (Print.Style.string_of_raw_typ [ANSITerminal.cyan] (Grammar.show_typ v.t))
-      (String.concat "\n" (List.map (to_string (level + 1)) children))
+      (String.concat "\n" (List.map (string_of_subtyping_derivation_tree (level + 1)) children))

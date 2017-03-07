@@ -86,7 +86,10 @@ let check_subtype f =
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
   let history, is_subtype = Subtype.subtype nominal_s nominal_t in
-  if !verbose then print_string (DerivationTree.to_string 0 history);
+  if !verbose then
+    print_string (
+      DerivationTree.string_of_subtyping_derivation_tree 0 history
+    );
   print_is_subtype raw_s raw_t is_subtype;
   print_endline "-------------------------"
 

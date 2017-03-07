@@ -1,4 +1,4 @@
-type 'a node_value = {
+type 'a subtyping_node = {
   rule: string;
   env : ContextType.context;
   s : 'a;
@@ -7,6 +7,6 @@ type 'a node_value = {
 
 type 'a t =
   | Empty
-  | Node of 'a node_value * 'a t list
+  | Node of 'a subtyping_node * 'a t list
 
-val to_string : int -> Grammar.nominal_typ t -> string
+val string_of_subtyping_derivation_tree : int -> Grammar.nominal_typ t -> string
