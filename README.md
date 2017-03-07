@@ -14,7 +14,9 @@ Possible actions are:
 - evaluate a list of terms (`eval`).
 - use the typing algorithm on terms (`typing`).
 - use the subtyping algorithm on types (`subtype`).
-
+- use the subtyping algorithm on types without REFL rules (`subtype_without_REFL`).
+- check if each subtyping algorithm outputs the same result
+  (`subtype_same_output`).
 For example, you can try the subtyping algorithm on the file `test/subtype_simple.dsubml` by using:
 ```
 ./main.native -f test/subtype_simple.dsubml -a subtype
@@ -34,10 +36,11 @@ TODO
 
 ## Subtyping.
 
-- [ ] Check all results are correct.
+- [ ] Check all results.
 - [x] Automatic verification for tests.
 - [x] Add an history to get the derivation tree.
-- [ ] Introduction de sub dans la règle de selection.
+- [ ] Use SUB in select rules.
+- [x] Add an action to check if each algorithm outputs the same result.
 
 ## Typing.
 
