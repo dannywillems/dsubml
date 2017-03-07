@@ -15,6 +15,8 @@ and ('bn, 'fn) term =
   | TermVarApplication of 'fn * 'fn
   (* let x = t in u --> (t, (x, u))*)
   | TermLet of ('bn, 'fn) term * ('bn, ('bn, 'fn) term) abs
+  (* t : T *)
+  | TermAscription of ('bn, 'fn) term * ('bn, 'fn) typ
 
 and ('bn, 'fn) typ =
   (* Top type : ⊤ *)

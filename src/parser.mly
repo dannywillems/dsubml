@@ -58,6 +58,10 @@ rule_term:
 | LEFT_PARENT ;
   t = rule_term ;
   RIGHT_PARENT { t }
+| t = rule_terms_not_in_dsub { t }
+
+rule_terms_not_in_dsub:
+| t = rule_term ; typ_of_t = rule_typ { Grammar.TermAscription(t, typ_of_t) }
 
 rule_value:
 | LEFT_BRACKET ;

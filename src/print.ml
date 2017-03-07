@@ -22,6 +22,11 @@ let rec string_of_raw_term t = match t with
       x
       (string_of_raw_term t)
       (string_of_raw_term u)
+  | Grammar.TermAscription (t, typ_of_t) ->
+    Printf.sprintf
+      "%s : %s"
+      (string_of_raw_term t)
+      (string_of_raw_typ typ_of_t)
 
 and string_of_raw_typ t = match t with
   | Grammar.TypeTop -> "Any"

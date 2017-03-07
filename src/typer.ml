@@ -75,8 +75,8 @@ let rec type_of_internal history context term = match term with
   (* ALL-E. TODO --> Need an idea to substitute. *)
   | Grammar.TermVarApplication(x, y) ->
     (* Hypothesis, get the corresponding types of x and y *)
-    (* We can simply use ContextType.find x context, but it's to avoid
-       duplicating code for the history construction
+    (* We can simply use [ContextType.find x context], but it's to avoid
+       duplicating code for the history construction.
     *)
     let history_x, type_of_x =
       type_of_internal history context (Grammar.TermVariable x)
@@ -87,10 +87,10 @@ let rec type_of_internal history context term = match term with
     (* Check if x is a dependent function. *)
     (* let x1 = s in t *)
     let (s, (x1, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
-    if (Subtype.is_subtype ~context type_of_y s)
+    let subtype_history, is_subtype = Subtype.subtype ~context type_of_y s in
+    if is_subtype
     then (
-      let sigma = AlphaLib.Atom.Map.empty in
-      let sigma = AlphaLib.Atom.Map.add x1 s sigma in
+      let sigma = AlphaLib.Atom.Map.singleton x1 s in
       let typ = AlphaLib.KitSubst.apply Grammar.copy_typ sigma t x1 in
       let typing_node = DerivationTree.{
           rule ="ALL-E";
@@ -117,6 +117,22 @@ let rec type_of_internal history context term = match term with
           (s, type_of_y)
           )
         )
+  (* Unofficial typing rules *)
+  (* UN-ASC *)
+  | Grammar.TermAscription(t, typ_of_t) ->
+    let typing_node = DerivationTree.{
+        rule = "UN-ASC";
+        env = context;
+        term = term;
+        typ = typ_of_t;
+      }
+    in
+    let node = DerivationTree.Node(
+        typing_node,
+        history
+      )
+    in
+    node, typ_of_t
   (* TODO: SUB *)
   | _ -> raise (NotTypable term)
 
