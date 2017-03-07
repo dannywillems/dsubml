@@ -42,4 +42,12 @@ let string_of_context context =
     )
     context;
   (!s ^ "∅")
+
+module Style = struct
+  let string_of_context style context =
+    ANSITerminal.sprintf
+      style
+      "%s"
+      (string_of_context context)
+end
 (* ------------------------------------------------- *)
