@@ -42,6 +42,10 @@ and ('bn, 'fn) typ =
   visitors {
     variety = "iter2" ;
     ancestors = ["BindingForms.iter2"]
+  },
+  visitors {
+    variety = "endo" ;
+    ancestors = ["BindingForms.endo"]
   }
 ]
 
@@ -53,6 +57,7 @@ type nominal_term = (Atom.t, Atom.t) term
 type nominal_typ = (Atom.t, Atom.t) typ
 
 #include "AlphaLibMacros.cppo.ml"
+
 __ALL
 ALL(term)
 ALL(typ)
