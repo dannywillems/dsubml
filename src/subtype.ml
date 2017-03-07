@@ -96,6 +96,10 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
+    (* We create a new variable x and replace x1 (resp. x2) in t1 (resp. t2) by
+       the resulting variable. With this method, we can only add (x : S2) in the
+       environment.
+    *)
     let x = AlphaLib.Atom.copy x1 in
     let t1' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x1 x) t1 in
     let t2' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x2 x) t2 in
@@ -209,6 +213,10 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
+    (* We create a new variable x and replace x1 (resp. x2) in t1 (resp. t2) by
+       the resulting variable. With this method, we can only add (x : S2) in the
+       environment.
+    *)
     let x = AlphaLib.Atom.copy x1 in
     let t1' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x1 x) t1 in
     let t2' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x2 x) t2 in
