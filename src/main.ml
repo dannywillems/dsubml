@@ -9,6 +9,7 @@ type action =
   | Read_type
   | Eval
   | Subtype
+  | Subtype_same_output
   | Subtype_with_REFL
   | Typing
 
@@ -18,6 +19,7 @@ let action_of_string = function
   | "eval" -> Eval
   | "subtype" -> Subtype
   | "subtype_with_REFL" -> Subtype_with_REFL
+  | "subtype_same_output" -> Subtype_same_output
   | "typing" -> Typing
   | s -> raise (Undefined_action s)
 (* ------------------------------------------------- *)
@@ -82,6 +84,32 @@ let typing f =
     (Print.string_of_raw_typ (Grammar.show_typ type_of_t));
   print_endline "-------------------------"
 
+let check_subtype_algorithms f =
+  let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
+  let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
+  let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
+  let history_with_refl, is_subtype_with_refl =
+    Subtype.subtype ~with_refl:true nominal_s nominal_t
+  in
+  let history_without_refl, is_subtype_without_refl =
+    Subtype.subtype ~with_refl:false nominal_s nominal_t
+  in
+  Printf.printf
+    "%s <: %s\n"
+    (Print.string_of_raw_typ raw_s)
+    (Print.string_of_raw_typ raw_t);
+  ANSITerminal.printf
+    (if is_subtype_without_refl = raw_is_subtype then success_style else error_style)
+    "    %s %s\n"
+    (if is_subtype_without_refl = raw_is_subtype then "✓" else "❌")
+    "Without REFL";
+  ANSITerminal.printf
+    (if is_subtype_with_refl = raw_is_subtype then success_style else error_style)
+    "    %s %s\n"
+    (if is_subtype_with_refl = raw_is_subtype then "✓" else "❌")
+    "With REFL";
+  print_endline "-------------------------"
+
 let eval f =
   ()
 
@@ -119,6 +147,7 @@ let actions = [
   "read_term";
   "read_type";
   "subtype";
+  "subtype_same_output";
   "subtype_with_REFL";
   "typing";
 ]
@@ -149,5 +178,6 @@ let () =
   | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf
   | Subtype -> execute (check_subtype ~with_refl:false) lexbuf
+  | Subtype_same_output -> execute check_subtype_algorithms lexbuf
   | Subtype_with_REFL -> execute (check_subtype ~with_refl:true) lexbuf
   | Typing -> execute typing lexbuf
