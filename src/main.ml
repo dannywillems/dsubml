@@ -9,6 +9,7 @@ type action =
   | Read_type
   | Eval
   | Subtype
+  | Subtype_with_REFL
   | Typing
 
 let action_of_string = function
@@ -16,6 +17,7 @@ let action_of_string = function
   | "read_type" -> Read_type
   | "eval" -> Eval
   | "subtype" -> Subtype
+  | "subtype_with_REFL" -> Subtype_with_REFL
   | "typing" -> Typing
   | s -> raise (Undefined_action s)
 (* ------------------------------------------------- *)
@@ -83,11 +85,11 @@ let typing f =
 let eval f =
   ()
 
-let check_subtype f =
+let check_subtype ~with_refl f =
   let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
-  let history, is_subtype = Subtype.subtype nominal_s nominal_t in
+  let history, is_subtype = Subtype.subtype ~with_refl nominal_s nominal_t in
   if !verbose then DerivationTree.print_subtyping_derivation_tree history;
   print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
   print_endline "-------------------------"
@@ -113,13 +115,21 @@ let read_type_file f =
 
 (* ------------------------------------------------- *)
 (* Args stuff *)
+let actions = [
+  "read_term";
+  "read_type";
+  "subtype";
+  "subtype_with_REFL";
+  "typing";
+]
+
 let args_list = [
   ("-f",
    Arg.Set_string file_name,
    "File to read"
   );
   ("-a",
-   Arg.Symbol (["read_term" ; "read_type" ; "subtype" ; "typing"], (fun s -> eval_opt := s)),
+   Arg.Symbol (actions, (fun s -> eval_opt := s)),
    "The action to do"
   );
   ("-v",
@@ -138,5 +148,6 @@ let () =
   | Read_term -> execute read_term_file lexbuf
   | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf
-  | Subtype -> execute check_subtype lexbuf
+  | Subtype -> execute (check_subtype ~with_refl:false) lexbuf
+  | Subtype_with_REFL -> execute (check_subtype ~with_refl:true) lexbuf
   | Typing -> execute typing lexbuf
