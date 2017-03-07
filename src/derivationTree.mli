@@ -1,8 +1,15 @@
-type 'derivation subtyping_node = {
-  rule: string;
+type subtyping_node = {
+  rule : string;
   env : ContextType.context;
-  s : 'derivation;
-  t : 'derivation
+  s : Grammar.nominal_typ;
+  t : Grammar.nominal_typ;
+}
+
+type typing_node = {
+  rule : string;
+  env : ContextType.context;
+  term : Grammar.nominal_term;
+  typ : Grammar.nominal_typ;
 }
 
 type 'node_value t =
@@ -11,5 +18,5 @@ type 'node_value t =
 
 val string_of_subtyping_derivation_tree :
   int ->
-  Grammar.nominal_typ subtyping_node t ->
+  subtyping_node t ->
   string
