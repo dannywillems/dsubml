@@ -28,10 +28,18 @@ TODO
 
 ## Grammar.
 
-[ ] Add integer, string, char, bool.
-[ ] Surface language.
+- [ ] Add integer, string, char, bool.
+- [ ] Surface language.
+- [ ] Add (term : Type) with the typing rule: Γ ⊦ t : T => Γ ⊦ (t : T) : T
 
 ## Subtyping.
 
-[ ] Check all results are correct.
-[x] Add an history to get the derivation tree.
+- [ ] Check all results are correct.
+- [x] Automatic verification for tests.
+- [x] Add an history to get the derivation tree.
+- [ ] Introduction de sub dans la règle de selection.
+
+## Typing.
+
+- [ ] Dans let, vérifier que la variable n'apparait pas dans le type final -->
+methode occurs. Avoidance problem.

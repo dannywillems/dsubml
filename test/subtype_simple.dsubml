@@ -2,7 +2,7 @@
 (* Basic *)
 Nothing <: Any;;
 
-Any <: Nothing;;
+Any !<: Nothing;;
 
 {A : Nothing .. Nothing } <: { A : Nothing .. Any };;
 (* ---------------------------------------- *)
@@ -48,4 +48,4 @@ for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
 { A : {B : Nothing .. Any} .. Any } <: { A : Nothing .. Any };;
 (* ---------------------------------------- *)
 
-(for all(x : Nothing) (for all(y : Nothing) Any)) <: (for all(y : {A : Nothing .. Nothing}) y.A);;
+(for all(x : Nothing) (for all(y : Nothing) Any)) !<: (for all(y : {A : Nothing .. Nothing}) y.A);;
