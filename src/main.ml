@@ -68,7 +68,8 @@ let rec execute action lexbuf =
 let typing f =
   let raw_t = Parser.top_level Lexer.prog f in
   let nominal_t = Grammar.import_term AlphaLib.KitImport.empty raw_t in
-  let type_of_t = Typer.type_of nominal_t in
+  let history, type_of_t = Typer.type_of nominal_t in
+  if !verbose then DerivationTree.print_typing_derivation_tree history;
   ANSITerminal.print_string
     [ANSITerminal.cyan]
     (Print.string_of_raw_term raw_t);
@@ -76,7 +77,8 @@ let typing f =
   ANSITerminal.printf
     [ANSITerminal.blue]
     "%s\n"
-    (Print.string_of_raw_typ (Grammar.show_typ type_of_t))
+    (Print.string_of_raw_typ (Grammar.show_typ type_of_t));
+  print_endline "-------------------------"
 
 let eval f =
   ()
@@ -86,10 +88,7 @@ let check_subtype f =
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
   let history, is_subtype = Subtype.subtype nominal_s nominal_t in
-  if !verbose then
-    print_string (
-      DerivationTree.string_of_subtyping_derivation_tree 0 history
-    );
+  if !verbose then DerivationTree.print_subtyping_derivation_tree history;
   print_is_subtype raw_s raw_t is_subtype;
   print_endline "-------------------------"
 
