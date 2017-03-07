@@ -81,7 +81,7 @@ let typing f =
   ANSITerminal.printf
     [ANSITerminal.blue]
     "%s\n"
-    (Print.string_of_raw_typ (Grammar.show_typ type_of_t));
+    (Print.string_of_nominal_typ type_of_t);
   print_endline "-------------------------"
 
 let check_subtype_algorithms f =
@@ -128,7 +128,7 @@ let read_term_file f =
   print_endline "Raw term";
   Print.Style.raw_term [ANSITerminal.cyan] raw_term;
   print_endline "\nPrint nominal_term";
-  Print.Style.raw_term [ANSITerminal.blue] (Grammar.show_term nominal_term);
+  Print.Style.nominal_term [ANSITerminal.blue] nominal_term;
   print_endline "\n-------------------------"
 
 let read_type_file f =
@@ -137,7 +137,7 @@ let read_type_file f =
   print_endline "Raw typ";
   Print.Style.raw_typ [ANSITerminal.cyan] raw_typ;
   print_endline "\nPrint nominal_typ";
-  Print.Style.raw_typ [ANSITerminal.blue] (Grammar.show_typ nominal_typ);
+  Print.Style.nominal_typ [ANSITerminal.blue] nominal_typ;
   print_endline "\n-------------------------"
 (* ------------------------------------------------- *)
 

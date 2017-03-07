@@ -49,11 +49,23 @@ and string_of_raw_typ t = match t with
       (string_of_raw_typ typ1)
       (string_of_raw_typ typ2)
 
+let string_of_nominal_term t =
+  string_of_raw_term (Grammar.show_term t)
+
+let string_of_nominal_typ t =
+  string_of_raw_typ (Grammar.show_typ t)
+
 let raw_term t =
   Printf.printf "%s" (string_of_raw_term t)
 
 let raw_typ t =
   Printf.printf "%s" (string_of_raw_typ t)
+
+let nominal_term t =
+  Printf.printf "%s" (string_of_raw_term (Grammar.show_term t))
+
+let nominal_typ t =
+  Printf.printf "%s" (string_of_raw_typ (Grammar.show_typ t))
 
 module Style = struct
   let string_of_raw_term style t =
@@ -68,10 +80,28 @@ module Style = struct
       "%s"
       (string_of_raw_typ t)
 
+  let string_of_nominal_term style t =
+    (string_of_raw_term style (Grammar.show_term t))
+
+  let string_of_nominal_typ style t =
+    (string_of_raw_typ style (Grammar.show_typ t))
+
   let raw_term style t =
-    ANSITerminal.printf style "%s" (string_of_raw_term style t)
+    ANSITerminal.printf
+      style
+      "%s"
+      (string_of_raw_term style t)
 
   let raw_typ style t =
-    ANSITerminal.printf style "%s" (string_of_raw_typ style t)
+    ANSITerminal.printf
+      style
+      "%s"
+      (string_of_raw_typ style t)
+
+  let nominal_term style t =
+      raw_term style (Grammar.show_term t)
+
+  let nominal_typ style t =
+      raw_typ style (Grammar.show_typ t)
 end
 
