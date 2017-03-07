@@ -21,29 +21,23 @@ let rec subtype_internal history context s t = match (s, t) with
         t = t
     } in
     (DerivationTree.Node (subtyping_node, history), true)
-  (* REFL. FIXME α-equality OK?
-     Seems OK but must be more tested.
-     By the way, is it very useful? Like TRANS, could it be implied by other
-     rules based on the types structure?
-     I don't think we can remove REFL because we can not recover the node x.A <:
-     x.A with another rule. The type x.A only appears in SEL-<: and <:-SEL. If
-     we want to have x.A <: x.A (or in a more general case x.A <: y.A), we need
-     to create a new rule comparing bounds (maybe using TYP <: TYP). This rule
-     must look after variables x and y in the environment.
-     See the « unofficial » REFL-TYP.
-
-     On peut le supprimer en utilisant REFL-TYP mais cette fois-ci, REFL-TYP
-     doit simplement regarder si x et y sont le même atome.
+  (* REFL-TYP.
+     This rule is added from the official rule to be able to remove REFL.
+     The missing typing rules was for type projections. We only need to check
+     that the variables are represented by the same atom.
   *)
-  | (s, t) when (Grammar.equiv_typ s t) ->
+  | Grammar.TypeProjection(x, label_x), Grammar.TypeProjection(y, label_y) ->
     let subtyping_node =
       DerivationTree.{
-        rule = "REFL";
+        rule = "REFL-TYP";
         env = context;
         s = s;
         t = t
     } in
-    (DerivationTree.Node (subtyping_node, history), true)
+    (
+      DerivationTree.Node (subtyping_node, history),
+      (String.equal label_x label_y) && (AlphaLib.Atom.equal x y)
+    )
   (* TYP <: TYP *)
   | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2) ->
     let subtyping_node =
