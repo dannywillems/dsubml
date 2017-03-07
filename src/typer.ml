@@ -1,5 +1,4 @@
 exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
-exception NotTypable of Grammar.nominal_term
 
 let rec type_of_internal history context term = match term with
   (* ALL-I *)
@@ -133,8 +132,6 @@ let rec type_of_internal history context term = match term with
       )
     in
     node, typ_of_t
-  (* TODO: SUB *)
-  | _ -> raise (NotTypable term)
 
 let type_of term =
   type_of_internal [] (ContextType.empty ()) term
