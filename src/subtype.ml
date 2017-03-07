@@ -94,7 +94,7 @@ let rec subtype_internal history context s t = match (s, t) with
     let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (subtyping_node, history),
-      (label == label_selected) && (Grammar.equiv_typ s1 s2)
+      String.equal label label_selected && (Grammar.equiv_typ s1 s2)
     )
   (* SEL <: *)
   | (Grammar.TypeProjection(x, label_selected), t1) ->
@@ -108,7 +108,7 @@ let rec subtype_internal history context s t = match (s, t) with
     let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (subtyping_node, history),
-      (label == label_selected) && (Grammar.equiv_typ t1 t2)
+      String.equal label label_selected && (Grammar.equiv_typ t1 t2)
     )
   (* ALL <: ALL *)
   | (Grammar.TypeDependentFunction(s1, (x1, t1)),
