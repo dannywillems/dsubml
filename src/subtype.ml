@@ -31,6 +31,9 @@ let rec subtype_internal history context s t = match (s, t) with
      to create a new rule comparing bounds (maybe using TYP <: TYP). This rule
      must look after variables x and y in the environment.
      See the « unofficial » REFL-TYP.
+
+     On peut le supprimer en utilisant REFL-TYP mais cette fois-ci, REFL-TYP
+     doit simplement regarder si x et y sont le même atome.
   *)
   | (s, t) when (Grammar.equiv_typ s t) ->
     let subtyping_node =
@@ -41,28 +44,6 @@ let rec subtype_internal history context s t = match (s, t) with
         t = t
     } in
     (DerivationTree.Node (subtyping_node, history), true)
-  (* NOTE: It's not a defined subtyping rule. This rule is added to distinguish
-     the case Γ ⊦ x.A <: y.A. This case must not be handled by REFL because x.A
-     and y.A depends on the environment.
-
-     We call it REFL-TYP.
-
-     NOTE: As terms/types are not recursive, the corresponding hypothesis on the
-     variables must be removed from the environment. By the way, as the variable
-     is unique, it doesn't matter.
-  *)
-  | (Grammar.TypeProjection(x1, label_selected1),
-     Grammar.TypeProjection(x2, label_selected2)
-    ) ->
-    let label1, s1, t1 = TypeUtils.tuple_of_type_declaration (ContextType.find x1 context) in
-    let label2, s2, t2 = TypeUtils.tuple_of_type_declaration (ContextType.find x2 context) in
-    (* FIXME: We don't check that selected label are the same than label1 and
-    label2 *)
-    subtype_internal
-      history
-      context
-      (Grammar.TypeDeclaration(label1, s1, t1))
-      (Grammar.TypeDeclaration(label2, s2, t2))
   (* TYP <: TYP *)
   | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2) ->
     let subtyping_node =
@@ -78,7 +59,7 @@ let rec subtype_internal history context s t = match (s, t) with
       DerivationTree.Node (subtyping_node, [left_derivation_tree ; right_derivation_tree]),
       String.equal tag1 tag2 && left_is_subtype && right_is_subtype
     )
-  (* <: SEL *)
+  (* <: SEL. TODO: SUB must be allowed! *)
   | (s1, Grammar.TypeProjection(x, label_selected)) ->
     let subtyping_node =
       DerivationTree.{
@@ -94,9 +75,9 @@ let rec subtype_internal history context s t = match (s, t) with
     let (label, s2, t2) = TypeUtils.tuple_of_type_declaration (ContextType.find x context) in
     (
       DerivationTree.Node (subtyping_node, history),
-      String.equal label label_selected && (Grammar.equiv_typ s1 s2)
+      String.equal label label_selected && Grammar.equiv_typ s1 s2
     )
-  (* SEL <: *)
+  (* SEL <:. TODO: SUB must be allowed! *)
   | (Grammar.TypeProjection(x, label_selected), t1) ->
     let subtyping_node =
       DerivationTree.{
@@ -121,12 +102,15 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
-    let context' = ContextType.add x1 s1 (ContextType.add x2 s2 context) in
+    let x = AlphaLib.Atom.copy x1 in
+    let t1' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x1 x) t1 in
+    let t2' = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x2 x) t2 in
+    let context' = ContextType.add x s2 context in
     let left_derivation_tree, left_is_subtype =
       subtype_internal history context s2 s1
     in
     let right_derivation_tree, right_is_subtype =
-      subtype_internal history context' t1 t2
+      subtype_internal history context' t1' t2'
     in
     (
       DerivationTree.Node (
