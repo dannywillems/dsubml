@@ -18,10 +18,11 @@
 
 (* Only for testing. It's not a « real » token for the language *)
 %token SUBTYPE
+%token NOT_SUBTYPE
 
 %start <Grammar.raw_term> top_level
 %start <Grammar.raw_typ> top_level_type
-%start <Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
+%start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
 top_level:
@@ -32,7 +33,8 @@ top_level:
    subtyping algorithm.
 *)
 top_level_subtype:
-| s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (s, t) }
+| s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (true, s, t) }
+| s = rule_typ ; NOT_SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (false, s, t) }
 | EOF { raise End_of_file }
 
 (* Read a top level type. *)

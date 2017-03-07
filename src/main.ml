@@ -46,13 +46,13 @@ let print_error lexbuf =
 
 (* ------------------------------------------------- *)
 (* Functions for actions *)
-let print_is_subtype s t is_subtype =
+let print_is_subtype s t raw_is_subtype is_subtype =
   ANSITerminal.printf
-    (if is_subtype then success_style else error_style)
+    (if raw_is_subtype = is_subtype then success_style else error_style)
     "%s - %s is%s a subtype of %s\n"
-    (if is_subtype then "✓" else "❌")
+    (if raw_is_subtype = is_subtype then "✓" else "❌")
     (Print.string_of_raw_typ s)
-    (if is_subtype then "" else " not")
+    (if raw_is_subtype then "" else " not")
     (Print.string_of_raw_typ t)
 
 let rec execute action lexbuf =
@@ -84,12 +84,12 @@ let eval f =
   ()
 
 let check_subtype f =
-  let (raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
+  let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
   let history, is_subtype = Subtype.subtype nominal_s nominal_t in
   if !verbose then DerivationTree.print_subtyping_derivation_tree history;
-  print_is_subtype raw_s raw_t is_subtype;
+  print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
   print_endline "-------------------------"
 
 let read_term_file f =
