@@ -5,6 +5,13 @@
     the corresponding subtyping derivation tree.
 *)
 val subtype :
+  ?context:ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ ->
   (Grammar.nominal_typ DerivationTree.t * bool)
+
+val is_subtype :
+  ?context:ContextType.context ->
+  Grammar.nominal_typ ->
+  Grammar.nominal_typ ->
+  bool

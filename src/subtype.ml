@@ -138,5 +138,8 @@ let rec subtype_internal history context s t = match (s, t) with
   (* TODO: TRANS *)
   | (_, _) -> DerivationTree.Empty, false
 
-let subtype s t =
-  subtype_internal [DerivationTree.Empty] (ContextType.empty ()) s t
+let subtype ?(context = ContextType.empty ()) s t =
+  subtype_internal [DerivationTree.Empty] context s t
+
+let is_subtype ?(context = ContextType.empty ()) s t =
+  let _, b = subtype ~context s t in b
