@@ -46,3 +46,8 @@ let rec string_of_typing_derivation_tree level t = match t with
       (Print.Style.string_of_raw_typ [ANSITerminal.blue] (Grammar.show_typ v.typ))
       (String.concat "\n" (List.map (string_of_typing_derivation_tree (level + 1)) children))
 
+let print_subtyping_derivation_tree tree =
+  print_string (string_of_subtyping_derivation_tree 0 tree)
+
+let print_typing_derivation_tree tree =
+  print_string (string_of_typing_derivation_tree 0 tree)

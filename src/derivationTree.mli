@@ -20,3 +20,16 @@ val string_of_subtyping_derivation_tree :
   int ->
   subtyping_node t ->
   string
+
+val string_of_typing_derivation_tree :
+  int ->
+  typing_node t ->
+  string
+
+val print_subtyping_derivation_tree :
+  subtyping_node t ->
+  unit
+
+val print_typing_derivation_tree :
+  typing_node t ->
+  unit
