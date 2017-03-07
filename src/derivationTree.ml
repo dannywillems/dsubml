@@ -1,13 +1,13 @@
-type 'a subtyping_node = {
-  rule: string;
+type 'derivation subtyping_node = {
+  rule : string;
   env : ContextType.context;
-  s : 'a;
-  t : 'a;
+  s : 'derivation;
+  t : 'derivation;
 }
 
-type 'a t =
+type 'node_value t =
   | Empty
-  | Node of 'a subtyping_node * 'a t list
+  | Node of 'node_value * 'node_value t list
 
 let rec ( ^* ) s n = match n with
   | 0 -> ""

@@ -8,7 +8,7 @@ val subtype :
   ?context:ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ ->
-  (Grammar.nominal_typ DerivationTree.t * bool)
+  (Grammar.nominal_typ DerivationTree.subtyping_node DerivationTree.t * bool)
 
 val is_subtype :
   ?context:ContextType.context ->
