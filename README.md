@@ -20,6 +20,8 @@ For example, you can try the subtyping algorithm on the file `test/subtype_simpl
 ./main.native -f test/subtype_simple.dsubml -a subtype
 ```
 
+A verbose is available for some action to see the derivation tree. Use `-v` to
+activate this mode.
 
 TODO
 ====
