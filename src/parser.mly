@@ -22,6 +22,7 @@
 
 %start <Grammar.raw_term> top_level
 %start <Grammar.raw_typ> top_level_type
+%start <Grammar.raw_term * Grammar.raw_typ> top_level_check_typing
 %start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
@@ -40,6 +41,14 @@ top_level_subtype:
 (* Read a top level type. *)
 top_level_type:
 | s = rule_typ ; SEMICOLON ; SEMICOLON { s }
+| EOF { raise End_of_file }
+
+top_level_check_typing:
+| term = rule_term ;
+  COLON ;
+  typ = rule_typ ;
+  SEMICOLON ;
+  SEMICOLON { (term, typ) }
 | EOF { raise End_of_file }
 
 rule_term:
