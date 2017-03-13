@@ -1,0 +1,49 @@
+(* ---------------------------------------------------------- *)
+(* Very simple example with lambda *)
+(lambda(x : Nothing) x)
+:
+(for all(x : Nothing) Nothing);;
+
+(lambda(x : Any) x)
+:
+(for all(x : Any) Any);;
+
+(lambda(x : (for all(y : Nothing) Any)) x)
+:
+(for all(x : (for all(y : Nothing) Any)) (for all(y : Nothing) Any));;
+(* ---------------------------------------------------------- *)
+
+(* ---------------------------------------------------------- *)
+(* Example with let bindings *)
+(let x = lambda(x : Nothing) x in x)
+:
+(for all(x : Nothing) Nothing);;
+
+(* Polymorphic identity *)
+(
+let polymorphic_identity =
+  lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
+in polymorphic_identity
+)
+:
+(for all(x : { A : Nothing .. Any} ) (for all(y : x.A) x.A));;
+
+(
+let y  = { A = Nothing } in
+let polymorphic_identity =
+  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+in
+(polymorphic_identity y)
+)
+:
+(for all(y : { A : Nothing .. Nothing }) {A : Nothing .. Nothing});;
+
+(
+let y  = { A = Any } in
+let polymorphic_identity =
+  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+in
+(polymorphic_identity y)
+)
+:
+(for all(y : { A : Any .. Any }) {A : Any .. Any});;
