@@ -44,7 +44,7 @@ TODO
 
 - [ ] Add integer, string, char, bool.
 - [ ] Surface language.
-- [ ] Add (term : Type) with the typing rule: Γ ⊦ t : T => Γ ⊦ (t : T) : T
+- [x] Add (term : Type) with the typing rule: Γ ⊦ t : T => Γ ⊦ (t : T) : T
 
 ## Subtyping.
 
