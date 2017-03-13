@@ -1,10 +1,9 @@
-open Eval
-
 (* ------------------------------------------------- *)
 (* About actions *)
 exception Undefined_action of string
 
 type action =
+  | Check_typing
   | Read_term
   | Read_type
   | Eval
@@ -14,6 +13,7 @@ type action =
   | Typing
 
 let action_of_string = function
+  | "check_typing" -> Check_typing
   | "read_term" -> Read_term
   | "read_type" -> Read_type
   | "eval" -> Eval
@@ -68,6 +68,25 @@ let rec execute action lexbuf =
   | Parser.Error ->
     print_error lexbuf;
     exit 1
+
+let check_typing f =
+  let raw_term, raw_typ = Parser.top_level_check_typing Lexer.prog f in
+  let nominal_term = Grammar.import_term AlphaLib.KitImport.empty raw_term in
+  let nominal_typ = Grammar.import_typ AlphaLib.KitImport.empty raw_typ in
+  let history, derived_typ = Typer.type_of nominal_term in
+  let same_type = Grammar.equiv_typ derived_typ nominal_typ in
+  if !verbose then DerivationTree.print_typing_derivation_tree history;
+  ANSITerminal.printf
+    (if same_type then success_style else error_style)
+    "%s %s\n"
+    (if same_type then "✓" else "❌")
+    (Print.string_of_nominal_term nominal_term);
+  ANSITerminal.printf
+    [ANSITerminal.cyan]
+    "  Derived type: %s\n  Attending type: %s\n"
+    (Print.string_of_nominal_typ derived_typ)
+    (Print.string_of_nominal_typ nominal_typ);
+  print_endline "-------------------------"
 
 let typing f =
   let raw_t = Parser.top_level Lexer.prog f in
@@ -144,6 +163,7 @@ let read_type_file f =
 (* ------------------------------------------------- *)
 (* Args stuff *)
 let actions = [
+  "check_typing";
   "read_term";
   "read_type";
   "subtype";
@@ -174,6 +194,7 @@ let () =
 let () =
   let lexbuf = Lexing.from_channel (open_in (!file_name)) in
   match (action_of_string (!eval_opt)) with
+  | Check_typing -> execute check_typing lexbuf
   | Read_term -> execute read_term_file lexbuf
   | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf
