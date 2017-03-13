@@ -1,0 +1,6 @@
+(* Supposons qu'on ait
+  y : ??, x : y.A ⊦ x.B <: U.
+  De plus, y : { A : { B : L .. U } }.
+  On en déduit que y.A <: { B : L .. U } et par SEL <:, on en déduit que
+  x.B <: U car ça se ramène à U <: U.
+*)
