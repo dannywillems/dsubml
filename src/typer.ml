@@ -71,7 +71,7 @@ let rec type_of_internal history context term = match term with
       ),
       typ
     )
-  (* ALL-E. TODO --> Need an idea to substitute. *)
+  (* ALL-E. *)
   | Grammar.TermVarApplication(x, y) ->
     (* Hypothesis, get the corresponding types of x and y *)
     (* We can simply use [ContextType.find x context], but it's to avoid
@@ -83,14 +83,13 @@ let rec type_of_internal history context term = match term with
     let history_y, type_of_y =
       type_of_internal history context (Grammar.TermVariable y)
     in
-    (* Check if x is a dependent function. *)
+    (* Check if [x] is a dependent function. *)
     (* let x1 = s in t *)
     let (s, (x1, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
-    let subtype_history, is_subtype = Subtype.subtype ~context type_of_y s in
+    let _, is_subtype = Subtype.subtype ~context type_of_y s in
     if is_subtype
     then (
-      let sigma = AlphaLib.Atom.Map.singleton x1 s in
-      let typ = AlphaLib.KitSubst.apply Grammar.copy_typ sigma t x1 in
+      let typ = TypeSubstitution.substitute x1 type_of_y t in
       let typing_node = DerivationTree.{
           rule ="ALL-E";
           env = context;
