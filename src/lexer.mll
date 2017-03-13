@@ -19,6 +19,9 @@ let in_ = "in"
 let white = [' ' '\t' '\r']
 let newline = ['\n']
 
+(** TODO: We can split in several rules for the syntax used in subtyping verification
+    and typing verification
+*)
 rule prog = parse
   | white { prog lexbuf }
   | newline { next_line lexbuf;
