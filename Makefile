@@ -17,6 +17,12 @@ OCAMLBUILD := \
   -tag "cppo_I($(ALPHALIB))" \
   -tag "cppo_I($(PWD))"
 
+# Replace all files ending with .cppo.ml by .inferred.mli which is the
+# extension of generated interfaces by ocamlbuild.
+MLI := \
+  $(patsubst %.cppo.ml,%.inferred.mli,$(shell ls $(SRC_DIR)/*.cppo.ml)) \
+
+
 .PHONY: all test clean
 
 all:
@@ -24,6 +30,10 @@ all:
 
 test: all
 	@ ./$(TARGET)
+
+# Generate the interface for CPPO files.
+mli:
+	@ $(OCAMLBUILD) $(MLI)
 
 clean:
 	@ rm -f *~
