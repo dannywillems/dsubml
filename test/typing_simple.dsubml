@@ -15,3 +15,9 @@ let x = lambda(x : Nothing) x in x;;
 let polymorphic_identity =
   lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
 in polymorphic_identity;;
+
+let y  = { A = Nothing } in
+let polymorphic_identity =
+  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+in
+(polymorphic_identity y);;
