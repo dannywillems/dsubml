@@ -32,6 +32,7 @@ let verbose = ref false
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
+(* Style using ANSITerminal *)
 let error_style = [ANSITerminal.red]
 let success_style = [ANSITerminal.green]
 (* ------------------------------------------------- *)
