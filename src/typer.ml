@@ -84,12 +84,16 @@ let rec type_of_internal history context term = match term with
       type_of_internal history context (Grammar.TermVariable y)
     in
     (* Check if [x] is a dependent function. *)
-    (* let x1 = s in t *)
     let (s, (x1, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
     let _, is_subtype = Subtype.subtype ~context type_of_y s in
     if is_subtype
     then (
-      let typ = TypeSubstitution.substitute x1 type_of_y t in
+      (* Here, we rename the variable [x1] (which is the variable in the for all
+         type, by the given variable [y]). We don't substitute the variable by
+         the right types because it doesn't work with not well-typed types (like
+         x.A when x is of types Any).
+      *)
+      let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x1 y) t in
       let typing_node = DerivationTree.{
           rule ="ALL-E";
           env = context;
