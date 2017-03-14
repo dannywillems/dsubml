@@ -58,3 +58,10 @@ TODO
 
 - [ ] Dans let, vérifier que la variable n'apparait pas dans le type final -->
 methode occurs. Avoidance problem.
+- [ ] Improve error message in var application when we have x.A (for the moment, we only have x.A, not what is x.A). Example
+```
+let x = { A = Nothing } in
+let y = { A = Any } in
+let f = lambda(y : x.A) y in
+(f y);;
+```
