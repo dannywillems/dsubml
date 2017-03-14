@@ -1,3 +1,8 @@
+(** NOT USED ANYMORE.
+    Not removed if we need it.
+    This modules must never be used because the syntax of DSub is not stable by
+    substitution (but renaming is OK).
+*)
 exception TypeError of string
 
 let rec substitute x typ t =
