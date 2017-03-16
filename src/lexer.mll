@@ -15,6 +15,7 @@ let top = "Any"
 let bottom = "Nothing"
 let let_ = "let"
 let in_ = "in"
+let unimplemented_term = "Unimplemented"
 
 let white = [' ' '\t' '\r']
 let newline = ['\n']
@@ -35,6 +36,7 @@ rule prog = parse
   (* Only to test subtyping algorithm. It's not in the language *)
   | "<:" { Parser.SUBTYPE }
   | "!<:" { Parser.NOT_SUBTYPE }
+  | unimplemented_term { Parser.UNIMPLEMENTED_TERM }
 
   | ':' { Parser.COLON}
   | '.' { Parser.DOT }

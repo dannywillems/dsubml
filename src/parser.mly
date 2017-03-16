@@ -19,6 +19,7 @@
 (* Only for testing. It's not a « real » token for the language *)
 %token SUBTYPE
 %token NOT_SUBTYPE
+%token UNIMPLEMENTED_TERM
 
 %start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
@@ -69,6 +70,7 @@ top_level_check_typing:
 (* Rules to build terms and types. *)
 rule_term:
 | id = VAR { Grammar.TermVariable id }
+| UNIMPLEMENTED_TERM { Grammar.TermUnimplemented }
 | v = rule_value { v }
 | x = VAR ; y = VAR { Grammar.TermVarApplication (x, y) }
 | LET ;

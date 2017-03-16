@@ -27,6 +27,8 @@ let rec string_of_raw_term t = match t with
       "%s : %s"
       (string_of_raw_term t)
       (string_of_raw_typ typ_of_t)
+  | Grammar.TermUnimplemented ->
+    "Unimplemented"
 
 and string_of_raw_typ t = match t with
   | Grammar.TypeTop -> "Any"

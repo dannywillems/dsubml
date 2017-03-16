@@ -173,7 +173,7 @@ let typing f =
       if !verbose
       then DerivationTree.print_typing_derivation_tree history;
       Printf.printf "(Top level let definition)\n";
-      print_raw_term_with_nominal_typ raw_t type_of_t;
+      print_raw_term_with_nominal_typ (Grammar.TermVariable x) nominal_typ;
       kit_import_env := extended_kit_import_env;
       typing_env := ContextType.add atom_x nominal_typ (!typing_env)
     )

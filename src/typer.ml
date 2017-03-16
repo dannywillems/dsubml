@@ -119,7 +119,7 @@ let rec type_of_internal history context term = match term with
           (s, type_of_y)
           )
         )
-  (* Unofficial typing rules *)
+  (* ----- Unofficial typing rules ----- *)
   (* UN-ASC *)
   | Grammar.TermAscription(t, typ_of_t) ->
     let typing_node = DerivationTree.{
@@ -135,6 +135,21 @@ let rec type_of_internal history context term = match term with
       )
     in
     node, typ_of_t
+  (* UN-UNIMPLEMENTED *)
+  | Grammar.TermUnimplemented ->
+    let typing_node = DerivationTree.{
+        rule = "UN-UNIMPLEMENTED";
+        env = context;
+        term = term;
+        typ = Grammar.TypeBottom;
+      }
+    in
+    let node = DerivationTree.Node(
+        typing_node,
+        history
+      )
+    in
+    node, Grammar.TypeBottom
 
 let type_of ?(context = ContextType.empty ()) term =
   type_of_internal [] context term

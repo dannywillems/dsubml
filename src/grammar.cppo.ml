@@ -19,6 +19,9 @@ and ('bn, 'fn) term =
   (* ----- Unofficial terms ----- *)
   (* t : T *)
   | TermAscription of ('bn, 'fn) term * ('bn, 'fn) typ
+  (* Add the unimplemented term allows to define terms without given their implementation. Useful for testing. *)
+  | TermUnimplemented
+
 
 and ('bn, 'fn) typ =
   (* Top type : ⊤ *)
