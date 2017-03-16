@@ -96,3 +96,4 @@ let f = lambda(y : x.A) y in
 - [x] Be able to extend the environment with the syntax `let x : T = t`.
 - [ ] Use a default environment (like `Pervasives` in OCaml) while reading a files.
 - [ ] Emacs mode.
+- [ ] Add a syntastic sugar for dependent function when the variable is not needed in the return type.
