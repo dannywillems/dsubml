@@ -1,0 +1,6 @@
+let type_string : { A : Nothing .. Any } = Unimplemented;;
+
+let empty_string : type_string.A = Unimplemented;;
+let concatenate_string : for all(x : type_string.A) for all(x : type_string.A) type_string.A = Unimplemented;;
+let length_string : for all(str : type_string.A) type_int.A = Unimplemented;;
+let get_string : for all(str : type_string.A) for all(pos : type_int.A) type_char.A = Unimplemented;;
