@@ -305,9 +305,10 @@ let () =
 
 let stdlib_files = [
   "stdlib/unit.dsubml";
+  "stdlib/condition.dsubml";
   "stdlib/int.dsubml";
   "stdlib/char.dsubml";
-  "stdlib/string.dsubml"
+  "stdlib/string.dsubml";
 ]
 
 let rec add_in_environment files = match files with

@@ -20,6 +20,7 @@
 %token SUBTYPE
 %token NOT_SUBTYPE
 %token UNIMPLEMENTED_TERM
+%token ARROW
 
 %start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
@@ -132,6 +133,11 @@ rule_typ:
 
 (* Allow to add extra parentheses around for all types *)
 rule_typ_forall:
+| s = rule_typ ;
+  ARROW ;
+  t = rule_typ {
+          Grammar.TypeDependentFunction(s, ("_", t))
+        }
 | FORALL ;
   LEFT_PARENT ;
   x = VAR ;

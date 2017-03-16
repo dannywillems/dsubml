@@ -57,7 +57,6 @@ TODO
   - [x] Add a `magic` term of type `Nothing` to define a term which has no
     implementation (like `()` for `unit`). With this term, we can say a term
     exist without defining the meaning.
-- [ ] Surface language.
 - [x] Add (term : Type) with the typing rule: Γ ⊦ t : T => Γ ⊦ (t : T) : T
 
 ## Subtyping.
@@ -96,5 +95,8 @@ let f = lambda(y : x.A) y in
 - [x] Be able to extend the environment with the syntax `let x : T = t`.
 - [x] Use a default environment (like `Pervasives` in OCaml) while reading a files.
 - [ ] Emacs mode.
-- [ ] Add a syntastic sugar for dependent function when the variable is not
+
+## Surface language.
+
+- [x] Add a syntastic sugar for dependent function when the variable is not
   needed in the return type.
