@@ -1,0 +1,3 @@
+let empty = empty_string in
+let length_empty = length_string empty in
+length_empty;;
