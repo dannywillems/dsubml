@@ -1,5 +1,7 @@
 (* ---------------------------------------------------------- *)
 (* Very simple example with lambda *)
+let z : { A : Nothing .. Nothing } = { A = Nothing };;
+
 (lambda(x : Nothing) x)
 :
 (for all(x : Nothing) Nothing);;
@@ -19,31 +21,41 @@
 :
 (for all(x : Nothing) Nothing);;
 
+(* To use the type x.A. ERROR ! The type of y must be x.A but it doesn't recognize it because x is unbound. *)
+(let x = { A = Nothing } in lambda(y : x.A) y)
+:
+(for all(y : { A : Nothing .. Nothing }) { A : Nothing .. Nothing });;
+
 (* Polymorphic identity *)
-(
-let polymorphic_identity =
+(let polymorphic_identity =
   lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
-in polymorphic_identity
-)
+in polymorphic_identity)
 :
 (for all(x : { A : Nothing .. Any} ) (for all(y : x.A) x.A));;
 
-(
-let y  = { A = Nothing } in
+(* With an application to { A = Nothing } *)
+(let y  = { A = Nothing } in
 let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
-(polymorphic_identity y)
-)
+(polymorphic_identity y))
 :
 (for all(y : { A : Nothing .. Nothing }) {A : Nothing .. Nothing});;
 
-(
-let y  = { A = Any } in
+(let y  = { A = Any } in
 let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
-(polymorphic_identity y)
-)
+(polymorphic_identity y))
 :
 (for all(y : { A : Any .. Any }) {A : Any .. Any});;
+
+(* Parameters of type Any which is a function *)
+(let f = lambda(x : Any) x in
+let g = lambda(x : Nothing) x in
+(f g))
+:
+(for all(x : Nothing) Nothing);;
+
+(* Function returning a function *)
+(* lambda(x : Any) lambda(y : Any) (x y) *)

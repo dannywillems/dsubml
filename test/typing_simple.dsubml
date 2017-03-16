@@ -1,5 +1,8 @@
 (* ---------------------------------------------------------- *)
 (* Very simple example with lambda *)
+
+let y : { A : Nothing .. Nothing } = { A = Nothing };;
+
 lambda(x : Nothing) x;;
 
 lambda(x : Any) x;;
@@ -11,6 +14,10 @@ lambda(x : (for all(y : Nothing) Any)) x;;
 (* Example with let bindings *)
 let x = lambda(x : Nothing) x in x;;
 
+(* To use the type x.A *)
+let x = { A = Nothing } in
+lambda(y : x.A) y;;
+
 (* Polymorphic identity *)
 let polymorphic_identity =
   lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
@@ -21,3 +28,26 @@ let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
 (polymorphic_identity y);;
+
+let y  = { A = Any } in
+let polymorphic_identity =
+  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+in
+(polymorphic_identity y);;
+
+(*
+lambda(z : y.A)
+let polymorphic_identity =
+  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+in
+(polymorphic_identity z);;
+*)
+
+(* Parameters of type Any which is a function *)
+(*
+let f = lambda(x : Any) x in
+let g = lambda(x : Nothing) x in
+(f g);;
+*)
+(* Function returning a function *)
+(* lambda(x : Any) lambda(y : Any) (x y) *)
