@@ -28,7 +28,9 @@ let action_of_string = function
 (* References for arguments *)
 let file_name = ref ""
 let eval_opt = ref ""
+let show_derivation_tree = ref false
 let verbose = ref false
+let use_stdlib = ref false
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
@@ -46,8 +48,12 @@ let print_error lexbuf =
     (!file_name)
     pos.Lexing.pos_lnum
     (pos.Lexing.pos_cnum - pos.Lexing.pos_bol + 1)
+(* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
+(* Printing functions *)
+let print_info string =
+  if !verbose then (ANSITerminal.print_string [ANSITerminal.cyan] string)
 
 (* ------------------------------------------------- *)
 (* Functions for actions *)
@@ -122,7 +128,7 @@ let check_typing f =
   let nominal_typ = Grammar.import_typ AlphaLib.KitImport.empty raw_typ in
   let history, derived_typ = Typer.type_of nominal_term in
   let same_type = Grammar.equiv_typ derived_typ nominal_typ in
-  if !verbose then DerivationTree.print_typing_derivation_tree history;
+  if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
   print_derived_and_attended_types derived_typ nominal_typ nominal_term same_type
 
 (** Action to call the typechecker *)
@@ -139,7 +145,7 @@ let typing f =
         ~context:(!typing_env)
         nominal_t
     in
-    if !verbose
+    if !show_derivation_tree
     then DerivationTree.print_typing_derivation_tree history;
     print_raw_term_with_nominal_typ raw_t type_of_t
     (* let x = t. Top level expressions. Can not appear in other expressions. *)
@@ -169,10 +175,9 @@ let typing f =
     (* The inferred type must be a subtype of the wanted type. *)
     if Subtype.is_subtype type_of_t nominal_typ
     then (
-      (* If verbose is activated, we print the typing derivation tree *)
-      if !verbose
+      (* If show_derivation_tree is activated, we print the typing derivation tree *)
+      if !show_derivation_tree
       then DerivationTree.print_typing_derivation_tree history;
-      Printf.printf "(Top level let definition)\n";
       print_raw_term_with_nominal_typ (Grammar.TermVariable x) nominal_typ;
       kit_import_env := extended_kit_import_env;
       typing_env := ContextType.add atom_x nominal_typ (!typing_env)
@@ -232,7 +237,7 @@ let check_subtype ~with_refl f =
   let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
   let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
   let history, is_subtype = Subtype.subtype ~with_refl nominal_s nominal_t in
-  if !verbose then DerivationTree.print_subtyping_derivation_tree history;
+  if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
   print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
   print_endline "-------------------------"
 
@@ -280,6 +285,14 @@ let args_list = [
    Arg.Symbol (actions, (fun s -> eval_opt := s)),
    "The action to do"
   );
+  ("--show-derivation-tree",
+   Arg.Set show_derivation_tree,
+   "Show derivation tree"
+  );
+  ("--use-stdlib",
+   Arg.Set use_stdlib,
+   "Use standard library."
+  );
   ("-v",
    Arg.Set verbose,
    "Verbose mode"
@@ -290,8 +303,36 @@ let () =
   Arg.parse args_list print_endline "An interpreter for DSub implemented in OCaml"
 (* ------------------------------------------------- *)
 
+let stdlib_files = [
+  "stdlib/unit.dsubml";
+  "stdlib/int.dsubml";
+  "stdlib/char.dsubml";
+  "stdlib/string.dsubml"
+]
+
+let rec add_in_environment files = match files with
+  | [] -> ()
+  | head :: tail ->
+    let channel = open_in head in
+    let lexbuf = Lexing.from_channel channel in
+    print_info (
+      Printf.sprintf
+        "  File: %s\n"
+        head
+    );
+    execute typing lexbuf;
+    close_in channel;
+    add_in_environment tail
+
 let () =
   let lexbuf = Lexing.from_channel (open_in (!file_name)) in
+  if (!use_stdlib)
+  then (
+    print_info "Loading definitions from standard library.\n";
+    add_in_environment stdlib_files;
+    print_info "\nStandard library loaded.\n";
+    print_info "-------------------------\n\n"
+  );
   match (action_of_string (!eval_opt)) with
   | Check_typing -> execute check_typing lexbuf
   | Read_term -> execute read_term_file lexbuf
