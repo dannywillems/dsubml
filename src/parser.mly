@@ -20,14 +20,26 @@
 %token SUBTYPE
 %token NOT_SUBTYPE
 
-%start <Grammar.raw_term> top_level
+%start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
 %start <Grammar.raw_term * Grammar.raw_typ> top_level_check_typing
 %start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
+(* ----------------------------------------------------- *)
+(* Top level rules *)
 top_level:
-| t = rule_term ; SEMICOLON ; SEMICOLON { t }
+| t = rule_term ; SEMICOLON ; SEMICOLON { Grammar.Term(t) }
+| LET ;
+  var = VAR ;
+  COLON ;
+  typ = rule_typ ;
+  EQUAL ;
+  term = rule_term ;
+  SEMICOLON ;
+  SEMICOLON {
+      Grammar.TopLevelLet(var, typ, term)
+    }
 | EOF { raise End_of_file }
 
 (* A rule which can be used to read a file containing only types. Useful to try
@@ -43,6 +55,7 @@ top_level_type:
 | s = rule_typ ; SEMICOLON ; SEMICOLON { s }
 | EOF { raise End_of_file }
 
+(* Read a top level check typing. *)
 top_level_check_typing:
 | term = rule_term ;
   COLON ;
@@ -50,7 +63,10 @@ top_level_check_typing:
   SEMICOLON ;
   SEMICOLON { (term, typ) }
 | EOF { raise End_of_file }
+(* ----------------------------------------------------- *)
 
+(* ----------------------------------------------------- *)
+(* Rules to build terms and types. *)
 rule_term:
 | id = VAR { Grammar.TermVariable id }
 | v = rule_value { v }
@@ -126,3 +142,4 @@ rule_typ_forall:
 | LEFT_PARENT ;
   t = rule_typ_forall
   RIGHT_PARENT { t }
+(* ----------------------------------------------------- *)
