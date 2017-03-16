@@ -94,6 +94,7 @@ let f = lambda(y : x.A) y in
   not well formed if T is the form x.A and x is not a variable of type { A :
   Nothing .. Any }.
 - [x] Be able to extend the environment with the syntax `let x : T = t`.
-- [ ] Use a default environment (like `Pervasives` in OCaml) while reading a files.
+- [x] Use a default environment (like `Pervasives` in OCaml) while reading a files.
 - [ ] Emacs mode.
-- [ ] Add a syntastic sugar for dependent function when the variable is not needed in the return type.
+- [ ] Add a syntastic sugar for dependent function when the variable is not
+  needed in the return type.
