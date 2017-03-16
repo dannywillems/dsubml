@@ -136,5 +136,5 @@ let rec type_of_internal history context term = match term with
     in
     node, typ_of_t
 
-let type_of term =
-  type_of_internal [] (ContextType.empty ()) term
+let type_of ?(context = ContextType.empty ()) term =
+  type_of_internal [] context term
