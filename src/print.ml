@@ -13,7 +13,7 @@ let rec string_of_raw_term t = match t with
       (string_of_raw_term term)
   | Grammar.TermVarApplication (x, y) ->
     Printf.sprintf
-      "%s %s"
+      "(%s %s)"
       x
       y
   | Grammar.TermLet (t, (x, u)) ->
