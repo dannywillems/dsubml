@@ -52,9 +52,9 @@ TODO
 
 ## Grammar.
 
-- [ ] Add `let x : T = t` to define top-level definition. It is used to extend
+- [x] Add `let x : T = t` to define top-level definition. It is used to extend
   the environment.
-  - [ ] Add a `magic` term of type `Nothing` to define a term which has no
+  - [x] Add a `magic` term of type `Nothing` to define a term which has no
     implementation (like `()` for `unit`). With this term, we can say a term
     exist without defining the meaning.
 - [ ] Surface language.
@@ -93,6 +93,6 @@ let f = lambda(y : x.A) y in
   returning `true` if the given nominal type is well formed. We say a type T is
   not well formed if T is the form x.A and x is not a variable of type { A :
   Nothing .. Any }.
-- [ ] Be able to extend the environment with the syntax `let x : T = t`.
+- [x] Be able to extend the environment with the syntax `let x : T = t`.
 - [ ] Use a default environment (like `Pervasives` in OCaml) while reading a files.
 - [ ] Emacs mode.
