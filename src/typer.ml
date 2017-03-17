@@ -48,7 +48,10 @@ let rec type_of_internal history context term = match term with
         term = term;
         typ = u_typ
       }
-    in (
+    in
+    if Grammar.occurs_typ x u_typ
+    then raise (Error.AvoidanceProblem(x, u_typ))
+    else (
       DerivationTree.Node(
         typing_node,
         [left_history ; right_history]

@@ -73,7 +73,7 @@ TODO
 
 ## Typing.
 
-- [ ] In `let x = s in t`, check that the variable doesn't appear in the type of
+- [x] In `let x = s in t`, check that the variable doesn't appear in the type of
   `t`. This is the avoidance problem.
 - [ ] Improve error message in var application when we have x.A (for the moment, we only have x.A, not what is x.A). Example
 - [ ] Take an extend environment (Atom -> String) to recover the initial
