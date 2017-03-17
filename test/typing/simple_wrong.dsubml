@@ -1,0 +1,14 @@
+(* Apply a value of type Any to a function which needs a type Nothing *)
+(*
+let x = { A = Nothing } in
+let y = { A = Any } in
+let f = lambda(y : x.A) y in
+(f y);;
+*)
+
+let f = lambda(x : Any) x in
+let g = lambda(x : Nothing) x in
+let y = f g in (* Ca nous donne Any *)
+let h = lambda(x : y.A) x in
+(h Any)
+;;

@@ -1,0 +1,3 @@
+let x = { A = { B = Nothing } } in
+let f = lambda (y : x.A) lambda (z : y.B) z in
+f x;;

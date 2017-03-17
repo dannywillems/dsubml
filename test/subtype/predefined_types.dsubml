@@ -1,0 +1,5 @@
+type_int.A !<: type_string.A;;
+
+type_unit.A !<: type_int.A;;
+
+type_unit.A !<: type_string.A;;
