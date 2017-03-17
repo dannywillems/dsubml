@@ -28,8 +28,42 @@ MLI := \
 all:
 	@ $(OCAMLBUILD) $(SRC_DIR)/$(TARGET)
 
+test_subtype:
+	@ echo "Predefined types: without REFL."
+	@ ./$(TARGET) -f test/subtype_predefined_types.dsubml \
+                -a subtype \
+                --use-stdlib
+	@ echo "\n---------------------------------------\n"
+	@ echo "Predefined types: with REFL."
+	@ ./$(TARGET) -f test/subtype_predefined_types.dsubml \
+                -a subtype_with_REFL \
+                --use-stdlib
+	@ echo "\n---------------------------------------\n"
+	@ echo "Predefined types: same output"
+	@ ./$(TARGET) -f test/subtype_predefined_types.dsubml \
+                -a subtype_same_output \
+                --use-stdlib
+	@ echo "\n---------------------------------------\n"
+	@ echo "Simple tests: without REFL"
+	@ ./$(TARGET) -f test/subtype_simple.dsubml \
+                -a subtype
+	@ echo "\n---------------------------------------\n"
+	@ echo "Simple tests: with REFL"
+	@ ./$(TARGET) -f test/subtype_simple.dsubml \
+                -a subtype_with_REFL
+	@ echo "\n---------------------------------------\n"
+	@ echo "Simple tests: same output"
+	@ ./$(TARGET) -f test/subtype_simple.dsubml \
+                -a subtype_same_output
+
 test: all
-	@ ./$(TARGET)
+	@ ./$(TARGET) -f test/subtype_predefined_types.dsubml \
+                -a subtype_same_output \
+                --use-stdlib
+	@ ./$(TARGET) -f test/subtype_predefined_types.dsubml \
+                -a subtype_same_output \
+                --use-stdlib
+
 
 # Generate the interface for CPPO files.
 mli:

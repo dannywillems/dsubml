@@ -124,8 +124,8 @@ let rec execute action lexbuf =
 (** [check_typing lexbuf] reads the next top level expression from [lexbuf] *)
 let check_typing f =
   let raw_term, raw_typ = Parser.top_level_check_typing Lexer.prog f in
-  let nominal_term = Grammar.import_term AlphaLib.KitImport.empty raw_term in
-  let nominal_typ = Grammar.import_typ AlphaLib.KitImport.empty raw_typ in
+  let nominal_term = Grammar.import_term (!kit_import_env) raw_term in
+  let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
   let history, derived_typ = Typer.type_of nominal_term in
   let same_type = Grammar.equiv_typ derived_typ nominal_typ in
   if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
@@ -198,13 +198,13 @@ let typing f =
 (** Action to check all algorithms for subtyping give the same results. *)
 let check_subtype_algorithms f =
   let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
-  let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
-  let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
+  let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
+  let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
   let history_with_refl, is_subtype_with_refl =
-    Subtype.subtype ~with_refl:true nominal_s nominal_t
+    Subtype.subtype ~with_refl:true ~context:(!typing_env) nominal_s nominal_t
   in
   let history_without_refl, is_subtype_without_refl =
-    Subtype.subtype ~with_refl:false nominal_s nominal_t
+    Subtype.subtype ~with_refl:false ~context:(!typing_env) nominal_s nominal_t
   in
   Printf.printf
     "%s <: %s\n"
@@ -234,9 +234,10 @@ let eval f =
 *)
 let check_subtype ~with_refl f =
   let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
-  let nominal_s = Grammar.import_typ AlphaLib.KitImport.empty raw_s in
-  let nominal_t = Grammar.import_typ AlphaLib.KitImport.empty raw_t in
-  let history, is_subtype = Subtype.subtype ~with_refl nominal_s nominal_t in
+  let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
+  let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
+  let history, is_subtype =
+    Subtype.subtype ~with_refl ~context:(!typing_env) nominal_s nominal_t in
   if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
   print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
   print_endline "-------------------------"
