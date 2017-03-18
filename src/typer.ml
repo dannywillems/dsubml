@@ -108,7 +108,7 @@ let rec type_of_internal history context term = match term with
       type_of_internal history context (Grammar.TermVariable y)
     in
     (* Check if [x] is a dependent function. *)
-    let (s, (x1, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
+    let (s, (z, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
     let _, is_subtype = Subtype.subtype ~context type_of_y s in
     if is_subtype
     then (
@@ -117,7 +117,7 @@ let rec type_of_internal history context term = match term with
          the right types because it doesn't work with not well-typed types (like
          x.A when x is of types Any).
       *)
-      let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton x1 y) t in
+      let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton z y) t in
       let typing_node = DerivationTree.{
           rule ="ALL-E";
           env = context;
