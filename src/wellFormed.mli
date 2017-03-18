@@ -1,4 +1,4 @@
-(** [well_formed env typ] returns [true] if [typ] is a well formed type. We say
+(** [typ env typ] returns [true] if [typ] is a well formed type. We say
     a type T is well formed if T is the form x.A where x is a sub-type of a type
     declaration. To make the connection with the module language, a type is well
     formed if
@@ -8,7 +8,7 @@
     As in the definition we allow sub-types, if x is of type Nothing, x.A is
     well-typed.
 *)
-val well_formed :
+val typ :
   ContextType.context ->
   Grammar.nominal_typ ->
   bool
