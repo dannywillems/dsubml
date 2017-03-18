@@ -1,12 +1,14 @@
+open TypeMISC
 (* ------------------------------------------------- *)
 (* About actions *)
 exception Undefined_action of string
 
 type action =
   | Check_typing
+  | Eval
+  | MISC
   | Read_term
   | Read_type
-  | Eval
   | Subtype
   | Subtype_same_output
   | Subtype_with_REFL
@@ -21,6 +23,7 @@ let action_of_string = function
   | "subtype_with_REFL" -> Subtype_with_REFL
   | "subtype_same_output" -> Subtype_same_output
   | "typing" -> Typing
+  | "misc" -> MISC
   | s -> raise (Undefined_action s)
 (* ------------------------------------------------- *)
 
@@ -108,6 +111,51 @@ let print_derived_and_attended_types
     (Print.string_of_nominal_typ attended_typ);
   print_endline "-------------------------"
 
+let read_top_level_let x raw_t raw_typ =
+  (* Convert raw term/type to nominal term/type using the import environment. *)
+  let nominal_t =
+    Grammar.import_term
+      (!kit_import_env)
+      raw_t
+  in
+  let nominal_typ =
+    Grammar.import_typ
+      (!kit_import_env)
+      raw_typ
+  in
+  (* Infer the type of t *)
+  let history, type_of_t =
+    Typer.type_of
+      ~context:(!typing_env)
+      nominal_t
+  in
+  let extended_kit_import_env, atom_x =
+    AlphaLib.KitImport.extend
+      (!kit_import_env)
+      x
+  in
+  (* The inferred type must be a subtype of the wanted type. *)
+  if Subtype.is_subtype type_of_t nominal_typ
+  then (
+    (* If show_derivation_tree is activated, we print the typing derivation tree *)
+    if !show_derivation_tree
+    then DerivationTree.print_typing_derivation_tree history;
+    print_raw_term_with_nominal_typ (Grammar.TermVariable x) nominal_typ;
+    kit_import_env := extended_kit_import_env;
+    typing_env := ContextType.add atom_x nominal_typ (!typing_env)
+  )
+  else
+    raise (
+      Error.SubtypeError (
+        (Printf.sprintf
+           "%s is not a subtype of %s"
+           (Print.string_of_nominal_typ type_of_t)
+           (Print.string_of_raw_typ raw_typ)
+        ),
+        type_of_t,
+        nominal_typ
+      )
+    )
 
 (* The main loop to execute actions. *)
 let rec execute action lexbuf =
@@ -120,16 +168,25 @@ let rec execute action lexbuf =
     print_error lexbuf;
     exit 1
 
+let misc f =
+  ()
+
 (** Action to type check. *)
 (** [check_typing lexbuf] reads the next top level expression from [lexbuf] *)
 let check_typing f =
   let raw_term, raw_typ = Parser.top_level_check_typing Lexer.prog f in
-  let nominal_term = Grammar.import_term (!kit_import_env) raw_term in
-  let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
-  let history, derived_typ = Typer.type_of nominal_term in
-  let same_type = Grammar.equiv_typ derived_typ nominal_typ in
-  if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
-  print_derived_and_attended_types derived_typ nominal_typ nominal_term same_type
+  match raw_term with
+  | Grammar.Term raw_term ->
+    let nominal_term = Grammar.import_term (!kit_import_env) raw_term in
+    let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
+    let history, derived_typ =
+      Typer.type_of ~context:(!typing_env) nominal_term in
+    let same_type = Grammar.equiv_typ derived_typ nominal_typ in
+    if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
+    print_derived_and_attended_types derived_typ nominal_typ nominal_term same_type
+  | Grammar.TopLevelLet(x, raw_typ, raw_term) ->
+    read_top_level_let x raw_term raw_typ
+
 
 (** Action to call the typechecker *)
 let typing f =
@@ -149,51 +206,8 @@ let typing f =
     then DerivationTree.print_typing_derivation_tree history;
     print_raw_term_with_nominal_typ raw_t type_of_t
     (* let x = t. Top level expressions. Can not appear in other expressions. *)
-  | Grammar.TopLevelLet (x, raw_typ, raw_t) ->
-    (* Convert raw term/type to nominal term/type using the import environment. *)
-    let nominal_t =
-      Grammar.import_term
-        (!kit_import_env)
-        raw_t
-    in
-    let nominal_typ =
-      Grammar.import_typ
-        (!kit_import_env)
-        raw_typ
-    in
-    (* Infer the type of t *)
-    let history, type_of_t =
-      Typer.type_of
-        ~context:(!typing_env)
-        nominal_t
-    in
-    let extended_kit_import_env, atom_x =
-      AlphaLib.KitImport.extend
-        (!kit_import_env)
-        x
-    in
-    (* The inferred type must be a subtype of the wanted type. *)
-    if Subtype.is_subtype type_of_t nominal_typ
-    then (
-      (* If show_derivation_tree is activated, we print the typing derivation tree *)
-      if !show_derivation_tree
-      then DerivationTree.print_typing_derivation_tree history;
-      print_raw_term_with_nominal_typ (Grammar.TermVariable x) nominal_typ;
-      kit_import_env := extended_kit_import_env;
-      typing_env := ContextType.add atom_x nominal_typ (!typing_env)
-    )
-    else
-      raise (
-        Error.SubtypeError (
-          (Printf.sprintf
-             "%s is not a subtype of %s"
-             (Print.string_of_nominal_typ type_of_t)
-             (Print.string_of_raw_typ raw_typ)
-          ),
-          type_of_t,
-          nominal_typ
-        )
-      )
+  | Grammar.TopLevelLet(x, raw_typ, raw_term) ->
+    read_top_level_let x raw_term raw_typ
 
 (** Action to check all algorithms for subtyping give the same results. *)
 let check_subtype_algorithms f =
@@ -275,6 +289,7 @@ let actions = [
   "subtype_same_output";
   "subtype_with_REFL";
   "typing";
+  "misc";
 ]
 
 let args_list = [
@@ -337,6 +352,7 @@ let () =
   );
   match (action_of_string (!eval_opt)) with
   | Check_typing -> execute check_typing lexbuf
+  | MISC -> execute misc lexbuf
   | Read_term -> execute read_term_file lexbuf
   | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf
