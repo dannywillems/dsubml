@@ -21,7 +21,7 @@
 :
 (for all(x : Nothing) Nothing);;
 
-(* To use the type x.A. ERROR ! The type of y must be x.A but it doesn't recognize it because x is unbound. *)
+(* To use the type x.A. *)
 let x : { A : Nothing .. Nothing } = { A = Nothing };;
 (lambda(y : x.A) y)
 :
@@ -34,15 +34,23 @@ in polymorphic_identity)
 :
 (for all(x : { A : Nothing .. Any} ) (for all(y : x.A) x.A));;
 
-(* With an application to { A = Nothing } *)
+(*
+  With an application to { A = Nothing }. Note that to avoid the avoidance
+  problem, we need to define the variable at the top level.
+*)
 let y : { A : Nothing .. Nothing } = { A = Nothing };;
+
 (let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
 (polymorphic_identity y))
 :
-(for all(y : y.A) y.A);;
+y.A -> y.A;;
 
+(*
+  With an application to { A = Any }. Note that to avoid the avoidance
+  problem, we need to define the variable at the top level.
+*)
 let y : { A : Any .. Any} = { A = Any };;
 
 (let polymorphic_identity =
@@ -50,7 +58,7 @@ let y : { A : Any .. Any} = { A = Any };;
 in
 (polymorphic_identity y))
 :
-(for all(y : y.A) y.A);;
+y.A -> y.A;;
 
 (* Parameters of type Any which is a function *)
 (let f = lambda(x : Any) x in
