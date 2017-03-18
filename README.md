@@ -88,7 +88,7 @@ let f = lambda(y : x.A) y in
 
 ## MISC
 
-- [ ] Add a function `well_formed : env -> Grammar.nominal_typ -> bool`
+- [x] Add a function `well_formed : env -> Grammar.nominal_typ -> bool`
   returning `true` if the given nominal type is well formed. We say a type T is
   not well formed if T is the form x.A and x is not a variable of type { A :
   Nothing .. Any }.
