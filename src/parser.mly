@@ -21,18 +21,23 @@
 %token NOT_SUBTYPE
 %token UNIMPLEMENTED_TERM
 %token ARROW
+%token EXCLAMATION
 
 %start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
 %start <Grammar.raw_top_level_term * Grammar.raw_typ> top_level_check_typing
 %start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
+%start <bool * Grammar.raw_top_level_typ> top_level_well_formed
 %%
 
 (* ----------------------------------------------------- *)
 (* Top level rules *)
 top_level:
 | t = rule_term ; SEMICOLON ; SEMICOLON { Grammar.Term(t) }
-| t = top_level_let { t }
+| t = top_level_let {
+          let (var, typ, term) = t in
+          Grammar.TopLevelLetTerm(var, typ, term)
+        }
 | EOF { raise End_of_file }
 
 top_level_let:
@@ -44,11 +49,11 @@ top_level_let:
   term = rule_term ;
   SEMICOLON ;
   SEMICOLON {
-      Grammar.TopLevelLet(var, typ, term)
+      (var, typ, term)
     }
 
 (* A rule which can be used to read a file containing only types. Useful to try
-   subtyping algorithm.
+   sub-typing algorithm.
 *)
 top_level_subtype:
 | s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (true, s, t) }
@@ -63,14 +68,25 @@ top_level_type:
 (* Read a top level check typing. *)
 top_level_check_typing:
   | t = top_level_let {
+            let (var, typ, term) = t in
             (* We can use any type we want, it's not used. *)
-            (t, Grammar.TypeBottom)
+            (Grammar.TopLevelLetTerm(var, typ, term), Grammar.TypeBottom)
           }
 | term = rule_term ;
   COLON ;
   typ = rule_typ ;
   SEMICOLON ;
   SEMICOLON { (Grammar.Term(term), typ) }
+| EOF { raise End_of_file }
+
+top_level_well_formed:
+| t = top_level_let { let (var, typ, term) = t in
+                        (true, Grammar.TopLevelLetType(var, typ, term))
+                      }
+| EXCLAMATION ; t = rule_typ ; SEMICOLON ; SEMICOLON {
+                                               (false, Grammar.Type(t))
+                                             }
+| t = rule_typ ; SEMICOLON ; SEMICOLON { (true, Grammar.Type(t))  }
 | EOF { raise End_of_file }
 (* ----------------------------------------------------- *)
 

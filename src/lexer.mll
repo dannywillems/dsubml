@@ -7,6 +7,15 @@
         pos with Lexing.pos_bol = lexbuf.Lexing.lex_curr_pos;
                  Lexing.pos_lnum = pos.Lexing.pos_lnum + 1
       }
+
+  let print_error lexbuf =
+    let pos = lexbuf.Lexing.lex_curr_p in
+    Printf.printf
+      "Syntax error - %d:%d\n"
+      pos.Lexing.pos_lnum
+      (pos.Lexing.pos_cnum - pos.Lexing.pos_bol + 1)
+
+
 }
 
 let abstraction = "lambda"
@@ -36,6 +45,7 @@ rule prog = parse
   (* Only to test subtyping algorithm. It's not in the language *)
   | "<:" { Parser.SUBTYPE }
   | "!<:" { Parser.NOT_SUBTYPE }
+  | "!" { Parser.EXCLAMATION }
   (* Syntastic sugar for functions where the variable is not present in the
      return type.
   *)
@@ -56,12 +66,12 @@ rule prog = parse
   | let_ { Parser.LET }
   | in_ { Parser.IN }
   | abstraction { Parser.ABSTRACTION }
-  | ['A' - 'Z']+ ['a' - 'z' '_' '\'']* as l { Parser.LABEL l }
-  | ['a' - 'z']+ ['a' - 'z' '_' '\'']* as id { Parser.VAR id }
-  | _ { failwith "Illegal character" }
+  | ['A' - 'Z']+ ['a' - 'z' '_' '\'' '0' - '9']* as l { Parser.LABEL l }
+  | ['a' - 'z']+ ['a' - 'z' '_' '\'' '0' - '9']* as id { Parser.VAR id }
+  | _ { print_error lexbuf; failwith "Illegal character" }
   | eof { Parser.EOF }
 
 and comment = parse
   | "*)" { () }
-  | eof { failwith "Unterminated comment" }
+  | eof { print_error lexbuf; failwith "Unterminated comment" }
   | _ { comment lexbuf }

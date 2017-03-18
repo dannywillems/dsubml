@@ -1,0 +1,72 @@
+(* -------------------------------------------------- *)
+(* ----- Type projection ----- *)
+(* Module with a type A equal to Nothing. *)
+let x : { A : Nothing .. Nothing } = { A = Nothing };;
+x.A;;
+
+(* The special case Nothing. *)
+let y : Nothing = Unimplemented;;
+y.A;;
+
+(* But the Any case is not well formed. *)
+let z : Any = Unimplemented;;
+! z.A;;
+
+(* Function with two well formed types *)
+x.A -> y.A;;
+
+(* Function with a well formed return type. *)
+! x.A -> z.A;;
+
+(* Function with a well formed parameter type. *)
+! z.A -> x.A;;
+
+! z.A -> z.A;;
+
+(x.A -> x.A) -> (x.A -> x.A);;
+
+! (x.A -> z.A) -> (z.A -> x.A);;
+(* -------------------------------------------------- *)
+
+(* -------------------------------------------------- *)
+(* ----- Type declarations ----- *)
+(* The bounds are well formed. *)
+{ A : x.A .. x.A };;
+
+(* The lower bound is not well formed. *)
+! { A : z.A .. x.A };;
+
+(* not well formed bounds. *)
+! { A : z.A .. z.A };;
+
+(* Try to get the type tag A on a function *)
+let x2 : x.A -> x.A = lambda(a : x.A) a;;
+! x2.A;;
+
+(* A bound is not a well formed type function. *)
+! { A : x2.A .. z.A };;
+(* -------------------------------------------------- *)
+
+(* -------------------------------------------------- *)
+(* ----- Type declaration in type declaration ----- *)
+(* Well typed upper bound. *)
+{ A : Nothing .. { B : x.A .. x.A } };;
+
+(* The lower bound is not a subtype of the upper bound. *)
+! { A : Any .. { B : x.A .. x.A } };;
+
+(* lower bound is a function and the upper bound a type declaration, not
+  compatible.
+*)
+! { A : x2.A .. { B : x.A .. x.A } };;
+
+(*
+   Two types declarations as bounds. The lower bound is not a sub-type of the upper
+bound because [x.A] is not comparable with [y.A].
+*)
+! { A : { B : x.A .. x.A } .. { B : x.A .. y.A } };;
+
+(*
+   Nested type declarations in nested type declarations.
+*)
+{ A : { B : { C : x.A .. x.A } .. Any } .. Any };;

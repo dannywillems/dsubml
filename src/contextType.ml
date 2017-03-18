@@ -16,6 +16,8 @@ type t = Grammar.nominal_typ
 (* The type of a context *)
 type context = t ContextModule.t
 
+exception NotInEnvironment of key * context
+
 (* ------------------------------------------------- *)
 (*
   The usual operations on contexts like create an empty one, add, check if it's
@@ -32,7 +34,10 @@ let is_empty context =
   ContextModule.is_empty context
 
 let find x context =
-  ContextModule.find x context
+  try
+    ContextModule.find x context
+  with
+  | Not_found -> raise (NotInEnvironment (x, context))
 
 let string_of_context context =
   let s = ref "" in

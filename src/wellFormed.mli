@@ -7,6 +7,9 @@
 
     As in the definition we allow sub-types, if x is of type Nothing, x.A is
     well-typed.
+
+    In addition to that, in the case of a type declaration, the lower bound must
+    be a sub-type of the upper bound.
 *)
 val typ :
   ContextType.context ->

@@ -1,0 +1,3 @@
+TARGET_OPTION         := \
+#                     -v \
+#                     --show-derivation-tree

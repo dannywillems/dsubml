@@ -1,4 +1,5 @@
-open TypeMISC
+open WellFormed
+
 (* ------------------------------------------------- *)
 (* About actions *)
 exception Undefined_action of string
@@ -6,7 +7,7 @@ exception Undefined_action of string
 type action =
   | Check_typing
   | Eval
-  | MISC
+  | WellFormed
   | Read_term
   | Read_type
   | Subtype
@@ -23,7 +24,7 @@ let action_of_string = function
   | "subtype_with_REFL" -> Subtype_with_REFL
   | "subtype_same_output" -> Subtype_same_output
   | "typing" -> Typing
-  | "misc" -> MISC
+  | "wellFormed" -> WellFormed
   | s -> raise (Undefined_action s)
 (* ------------------------------------------------- *)
 
@@ -43,24 +44,7 @@ let success_style = [ANSITerminal.green]
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
-(* Syntax error management *)
-let print_error lexbuf =
-  let pos = lexbuf.Lexing.lex_curr_p in
-  Printf.printf
-    "Syntax error in %s - %d:%d\n"
-    (!file_name)
-    pos.Lexing.pos_lnum
-    (pos.Lexing.pos_cnum - pos.Lexing.pos_bol + 1)
-(* ------------------------------------------------- *)
-
-(* ------------------------------------------------- *)
-(* Printing functions *)
-let print_info string =
-  if !verbose then (ANSITerminal.print_string [ANSITerminal.cyan] string)
-
-(* ------------------------------------------------- *)
-(* Functions for actions *)
-
+(* References used for environments *)
 (* The environment to convert raw terms/types to nominal terms/types.
    Due to the design choice of the eval loop, we use a reference.
 *)
@@ -70,8 +54,24 @@ let kit_import_env = ref AlphaLib.KitImport.empty
    Due to the design choice of the eval loop, we use a reference.
 *)
 let typing_env = ref (ContextType.empty ())
+(* ------------------------------------------------- *)
 
-(* ---- Some printing functions ---- *)
+(* ------------------------------------------------- *)
+(* Printing functions *)
+let print_info string =
+  if !verbose then (ANSITerminal.print_string [ANSITerminal.cyan] string)
+
+(* Syntax error *)
+let print_error lexbuf =
+  let pos = lexbuf.Lexing.lex_curr_p in
+  Printf.printf
+    "Syntax error in %s - %d:%d\n"
+    (!file_name)
+    pos.Lexing.pos_lnum
+    (pos.Lexing.pos_cnum - pos.Lexing.pos_bol + 1)
+
+(* ------------------------------------------------- *)
+(* Functions for actions *)
 (** [print_is_subtyppe s t raw_is_subtype is_subtype] *)
 let print_is_subtype s t raw_is_subtype is_subtype =
   ANSITerminal.printf
@@ -80,7 +80,8 @@ let print_is_subtype s t raw_is_subtype is_subtype =
     (if raw_is_subtype = is_subtype then "✓" else "❌")
     (Print.string_of_raw_typ s)
     (if raw_is_subtype then "" else " not")
-    (Print.string_of_raw_typ t)
+    (Print.string_of_raw_typ t);
+  if raw_is_subtype <> is_subtype then exit(1)
 
 let print_raw_term_with_nominal_typ raw_term nominal_typ =
   ANSITerminal.print_string
@@ -109,8 +110,26 @@ let print_derived_and_attended_types
     "  Derived type: %s\n  Attending type: %s\n"
     (Print.string_of_nominal_typ derived_typ)
     (Print.string_of_nominal_typ attended_typ);
-  print_endline "-------------------------"
+  print_endline "-------------------------";
+  if not same_type then exit(1)
 
+let print_is_well_formed raw_is_well_formed is_well_formed raw_typ =
+  let is_right = raw_is_well_formed = is_well_formed in
+  let style = if is_right then success_style else error_style in
+  let icon = if is_right then "✓" else "❌" in
+  let string_of_raw_typ = Print.string_of_raw_typ raw_typ in
+  ANSITerminal.printf
+    style
+    "%s %s\n  Algorithm output: %s\n  Attending output: %s\n"
+    icon
+    string_of_raw_typ
+    (string_of_bool is_well_formed)
+    (string_of_bool raw_is_well_formed);
+  print_endline "-------------------------";
+  if not is_right then exit(1)
+
+
+(* ------------------------------------------------- *)
 let read_top_level_let x raw_t raw_typ =
   (* Convert raw term/type to nominal term/type using the import environment. *)
   let nominal_t =
@@ -168,8 +187,17 @@ let rec execute action lexbuf =
     print_error lexbuf;
     exit 1
 
-let misc f =
-  ()
+let well_formed f =
+  let raw_is_well_formed, top_level =
+    Parser.top_level_well_formed Lexer.prog f
+  in
+  match top_level with
+  | Grammar.Type raw_typ ->
+    let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
+    let is_well_formed = WellFormed.typ (!typing_env) nominal_typ in
+    print_is_well_formed raw_is_well_formed is_well_formed raw_typ
+  | Grammar.TopLevelLetType(x, raw_typ, raw_term) ->
+    read_top_level_let x raw_term raw_typ
 
 (** Action to type check. *)
 (** [check_typing lexbuf] reads the next top level expression from [lexbuf] *)
@@ -184,7 +212,7 @@ let check_typing f =
     let same_type = Grammar.equiv_typ derived_typ nominal_typ in
     if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
     print_derived_and_attended_types derived_typ nominal_typ nominal_term same_type
-  | Grammar.TopLevelLet(x, raw_typ, raw_term) ->
+  | Grammar.TopLevelLetTerm(x, raw_typ, raw_term) ->
     read_top_level_let x raw_term raw_typ
 
 
@@ -206,7 +234,7 @@ let typing f =
     then DerivationTree.print_typing_derivation_tree history;
     print_raw_term_with_nominal_typ raw_t type_of_t
     (* let x = t. Top level expressions. Can not appear in other expressions. *)
-  | Grammar.TopLevelLet(x, raw_typ, raw_term) ->
+  | Grammar.TopLevelLetTerm(x, raw_typ, raw_term) ->
     read_top_level_let x raw_term raw_typ
 
 (** Action to check all algorithms for subtyping give the same results. *)
@@ -266,7 +294,7 @@ let read_term_file f =
     print_endline "\nPrint nominal_term";
     Print.Style.nominal_term [ANSITerminal.blue] nominal_term;
     print_endline "\n-------------------------"
-  | Grammar.TopLevelLet (x, typ, term) -> () (* TODO *)
+  | Grammar.TopLevelLetTerm (x, typ, term) -> () (* TODO *)
 
 (** Action to read a file with list of types. *)
 let read_type_file f =
@@ -289,7 +317,7 @@ let actions = [
   "subtype_same_output";
   "subtype_with_REFL";
   "typing";
-  "misc";
+  "wellFormed";
 ]
 
 let args_list = [
@@ -352,7 +380,7 @@ let () =
   );
   match (action_of_string (!eval_opt)) with
   | Check_typing -> execute check_typing lexbuf
-  | MISC -> execute misc lexbuf
+  | WellFormed -> execute well_formed lexbuf
   | Read_term -> execute read_term_file lexbuf
   | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf

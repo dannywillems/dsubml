@@ -1,3 +1,5 @@
+include Makefile.option
+
 TARGET := \
   main.native
 
@@ -33,46 +35,53 @@ test_subtype:
 	@ echo "Predefined types: without REFL."
 	@ ./$(TARGET) -f test/subtype/predefined_types.dsubml \
                 -a subtype \
-                --use-stdlib
+                --use-stdlib $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 	@ echo "Predefined types: with REFL."
 	@ ./$(TARGET) -f test/subtype/predefined_types.dsubml \
                 -a subtype_with_REFL \
-                --use-stdlib
+                --use-stdlib $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 	@ echo "Predefined types: same output"
 	@ ./$(TARGET) -f test/subtype/predefined_types.dsubml \
                 -a subtype_same_output \
-                --use-stdlib
+                --use-stdlib $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 	@ echo "Simple tests: without REFL"
 	@ ./$(TARGET) -f test/subtype/simple.dsubml \
-                -a subtype
+                -a subtype $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 	@ echo "Simple tests: with REFL"
 	@ ./$(TARGET) -f test/subtype/simple.dsubml \
-                -a subtype_with_REFL
+                -a subtype_with_REFL $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 	@ echo "Simple tests: same output"
 	@ ./$(TARGET) -f test/subtype/simple.dsubml \
-                -a subtype_same_output
+                -a subtype_same_output $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 
 test_typing:
 	@ echo "----- Typing Algorithm -----"
 	@ echo "Simple tests."
 	@ ./$(TARGET) -f test/typing/simple.dsubml \
-                -a typing
+                -a typing $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 
 test_check_typing:
 	@ echo "----- Check Typing Algorithm -----"
 	@ echo "Simple tests."
 	@ ./$(TARGET) -f test/check_typing/simple.dsubml \
-                -a check_typing
+                -a check_typing $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
 
-test: test_subtype test_typing test_check_typing
+test_well_formed:
+	@ echo "----- Check Well Formed Algorithm -----"
+	@ echo "Simple tests."
+	@ ./$(TARGET) -f test/wellFormed/simple.dsubml \
+                -a wellFormed $(TARGET_OPTION)
+	@ echo "\n---------------------------------------\n"
+
+test: all test_subtype test_typing test_check_typing test_well_formed
 
 # Generate the interface for CPPO files.
 mli:
