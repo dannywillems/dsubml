@@ -30,6 +30,16 @@ val is_value :
   Grammar.nominal_term ->
   bool
 
+(** [is_type_declaration context typ] returns [true] if [typ] is a type
+    declaration (i.e. a module). It also considers the nested type declarations
+    i.e. when the variable [x] in a type projection [x.A] is an alias of [y.A]
+    in the context [context] where [y] is a type declaration.
+*)
+val is_type_declaration :
+  ContextType.context ->
+  Grammar.nominal_typ ->
+  bool
+
 (** [as_value term] returns [term] if it's a value, else raise an exception
     [NotAValue].
 *)

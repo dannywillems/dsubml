@@ -15,6 +15,13 @@ let is_value t = match t with
   | Grammar.TermTypeTag (_) | Grammar.TermAbstraction (_) -> true
   | _ -> false
 
+let rec is_type_declaration context typ = match typ with
+  | Grammar.TypeDeclaration _ -> true
+  | Grammar.TypeProjection (var, tag) ->
+    let type_of_var = ContextType.find var context in
+    is_type_declaration context type_of_var
+  | _ -> false
+
 let as_value t =
   if is_value t
   then t
