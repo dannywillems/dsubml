@@ -24,7 +24,7 @@
 
 %start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
-%start <Grammar.raw_term * Grammar.raw_typ> top_level_check_typing
+%start <Grammar.raw_top_level_term * Grammar.raw_typ> top_level_check_typing
 %start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
 %%
 
@@ -32,6 +32,10 @@
 (* Top level rules *)
 top_level:
 | t = rule_term ; SEMICOLON ; SEMICOLON { Grammar.Term(t) }
+| t = top_level_let { t }
+| EOF { raise End_of_file }
+
+top_level_let:
 | LET ;
   var = VAR ;
   COLON ;
@@ -42,7 +46,6 @@ top_level:
   SEMICOLON {
       Grammar.TopLevelLet(var, typ, term)
     }
-| EOF { raise End_of_file }
 
 (* A rule which can be used to read a file containing only types. Useful to try
    subtyping algorithm.
@@ -59,11 +62,15 @@ top_level_type:
 
 (* Read a top level check typing. *)
 top_level_check_typing:
+  | t = top_level_let {
+            (* We can use any type we want, it's not used. *)
+            (t, Grammar.TypeBottom)
+          }
 | term = rule_term ;
   COLON ;
   typ = rule_typ ;
   SEMICOLON ;
-  SEMICOLON { (term, typ) }
+  SEMICOLON { (Grammar.Term(term), typ) }
 | EOF { raise End_of_file }
 (* ----------------------------------------------------- *)
 
