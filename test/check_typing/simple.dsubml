@@ -13,6 +13,12 @@
 :
 (Nothing -> Any) -> (Nothing -> Any);;
 (* (for all(x : (for all(y : Nothing) Any)) (for all(y : Nothing) Any));; *)
+
+(* Function taking a function and returning a function *)
+(lambda(x : Nothing -> Nothing) x)
+:
+(Nothing -> Nothing) -> (Nothing -> Nothing);;
+
 (* ---------------------------------------------------------- *)
 
 (* ---------------------------------------------------------- *)
@@ -25,7 +31,7 @@
 let x : { A : Nothing .. Nothing } = { A = Nothing };;
 (lambda(y : x.A) y)
 :
-(for all(y : x.A) x.A);;
+(x.A -> x.A);;
 
 (* Polymorphic identity *)
 (let polymorphic_identity =
@@ -60,12 +66,13 @@ in
 :
 y.A -> y.A;;
 
-(* Parameters of type Any which is a function *)
+(* -------------------------------------------------- *)
+(* Simple test with SUB *)
+(* Functions of type Any -> Any taking a function as parameter.
+   We lost some information about the parameters in the returned type.
+*)
 (let f = lambda(x : Any) x in
 let g = lambda(x : Nothing) x in
 (f g))
 :
-(for all(x : Nothing) Nothing);;
-
-(* Function returning a function *)
-(* lambda(x : Any) lambda(y : Any) (x y) *)
+Any;;
