@@ -32,9 +32,14 @@ let rec subtype_internal history context s t =
      The missing typing rules was for type projections. We only need to check
      that the variables are represented by the same atom.
 
+     NOTE: The when statement is mandatory!
+     If we don't mention it, and do the atom equality checking in the body of
+     the expression for this pattern, it won't work because the algorithm choose
+     this pattern instead of SEL <: or <: SEL.
      Γ ⊦ x.A <: x.A.
   *)
-  | Grammar.TypeProjection(x, label_x), Grammar.TypeProjection(y, label_y) ->
+  | Grammar.TypeProjection(x, label_x), Grammar.TypeProjection(y, label_y)
+    when (String.equal label_x label_y) && (AlphaLib.Atom.equal x y) ->
     let subtyping_node =
       DerivationTree.{
         rule = "REFL-TYP";
@@ -44,7 +49,7 @@ let rec subtype_internal history context s t =
     } in
     (
       DerivationTree.Node (subtyping_node, history),
-      (String.equal label_x label_y) && (AlphaLib.Atom.equal x y)
+      true
     )
   (* TYP <: TYP
      Γ ⊦ S2 <: S1 ∧ Γ ⊦ T1 <: T2 =>
