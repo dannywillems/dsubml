@@ -1,16 +1,16 @@
 (* The type of string *)
-let type_string : { A : Nothing .. Any } = Unimplemented;;
+let string : { A : Nothing .. Any } = Unimplemented;;
 
 (* Returns an empty string *)
-let empty_string : type_string.A = Unimplemented;;
+let empty_string : string.A = Unimplemented;;
 
 (* Concatenate two strings *)
 let concatenate_string :
-  type_string.A -> type_string.A -> type_string.A
+  string.A -> string.A -> string.A
   = Unimplemented;;
 
 (* Returns the length of a string *)
-let length_string : for all(str : type_string.A) type_int.A = Unimplemented;;
+let length_string : string.A -> int.A = Unimplemented;;
 
 (* [get_string str i] returns the character at position [i] in the string [str] *)
-let get_string : type_string.A -> type_int.A -> type_char.A = Unimplemented;;
+let get_string : string.A -> int.A -> char.A = Unimplemented;;

@@ -1,22 +1,22 @@
 (* This file defines integers. *)
 
 (* The int type is defined as a variable with an abstract field A. *)
-let type_int : { A : Nothing .. Any } = Unimplemented;;
+let int : { A : Nothing .. Any } = Unimplemented;;
 
 (* Usual operators *)
-let plus : for all(x : type_int.A) for all(x : type_int.A) type_int.A = Unimplemented;;
+let plus : int.A -> int.A -> int.A = Unimplemented;;
 
-let minus : for all(x : type_int.A) for all(x : type_int.A) type_int.A = Unimplemented;;
+let minus : int.A -> int.A -> int.A = Unimplemented;;
 
-let times : for all(x : type_int.A) for all(x : type_int.A) type_int.A = Unimplemented;;
+let times : int.A -> int.A -> int.A = Unimplemented;;
 
-let div : for all(x : type_int.A) for all(x : type_int.A) type_int.A = Unimplemented;;
+let div : int.A -> int.A -> int.A = Unimplemented;;
 
 (* Successor function *)
-let succ : for all(x : type_int.A) type_int.A = Unimplemented;;
+let succ : int.A -> int.A = Unimplemented;;
 
 (* Some number *)
-let zero : type_int.A = Unimplemented;;
-let one : type_int.A = succ zero;;
-let two : type_int.A = succ one;;
-let three : type_int.A = succ two;;
+let zero : int.A = Unimplemented;;
+let one : int.A = succ zero;;
+let two : int.A = succ one;;
+let three : int.A = succ two;;

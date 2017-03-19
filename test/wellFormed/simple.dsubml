@@ -70,3 +70,7 @@ bound because [x.A] is not comparable with [y.A].
    Nested type declarations in nested type declarations.
 *)
 { A : { B : { C : x.A .. x.A } .. Any } .. Any };;
+
+let z : { A : Nothing .. Any } = Unimplemented;;
+let x : z.A = Unimplemented;;
+! x.A;;
