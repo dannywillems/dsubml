@@ -33,5 +33,6 @@ let f = lambda(x : Any) x in
 let g = lambda(x : Nothing) x in
 (f g);;
 *)
+
 (* Function returning a function *)
 (* lambda(x : Any) lambda(y : Any) (x y) *)

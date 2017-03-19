@@ -1,3 +1,12 @@
-let x = { A = { B = Nothing } } in
+let x :
+  { A : { A : int.A .. Any } .. { A : int.A .. Any } }
+  =
+  { A = { A : int.A .. Any } };;
+
+let y : x.A = { A = int.A };;
+y.A <: int.A;;
+
+(*
 let f = lambda (y : x.A) lambda (z : y.B) z in
 f x;;
+*)

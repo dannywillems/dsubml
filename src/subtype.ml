@@ -1,10 +1,12 @@
 exception NotATypeDeclaration of Grammar.nominal_typ
 
-let rec subtype_internal history context s t = match (s, t) with
+let rec subtype_internal history context s t =
+  match (s, t) with
   (* TOP
      Γ ⊦ S <: TOP
   *)
   | (_, Grammar.TypeTop) ->
+    let () = print_endline "hello" in
     let subtyping_node =
       DerivationTree.{
         rule = "TOP";
@@ -56,10 +58,17 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
-    let left_derivation_tree, left_is_subtype = subtype_internal history context s2 s1 in
-    let right_derivation_tree, right_is_subtype = subtype_internal history context t1 t2 in
+    let left_derivation_tree, left_is_subtype =
+      subtype_internal history context s2 s1
+    in
+    let right_derivation_tree, right_is_subtype =
+      subtype_internal history context t1 t2
+    in
     (
-      DerivationTree.Node (subtyping_node, [left_derivation_tree ; right_derivation_tree]),
+      DerivationTree.Node (
+        subtyping_node,
+        [left_derivation_tree ; right_derivation_tree]
+      ),
       String.equal tag1 tag2 && left_is_subtype && right_is_subtype
     )
   (* <: SEL. SUB is allowed for lower bound.
@@ -107,6 +116,7 @@ let rec subtype_internal history context s t = match (s, t) with
         s = s;
         t = t
     } in
+    let () = print_endline "hello" in
     let type_of_x = ContextType.find x context in
     let (label, l, u) =
       TypeUtils.tuple_of_type_declaration type_of_x
