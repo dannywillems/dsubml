@@ -73,6 +73,10 @@ type ('bn, 'fn) top_level_typ =
   | Type of ('bn, 'fn) typ
   (* let x : T = t -> Top level definition. Must never appear in a term *)
   | TopLevelLetType of 'fn * ('bn, 'fn) typ * ('bn, 'fn) term
+
+type ('bn, 'fn) top_level_subtype =
+  | CoupleTypes of ('bn, 'fn) typ * ('bn, 'fn) typ
+  | TopLevelLetSubtype of 'fn * ('bn, 'fn) typ * ('bn, 'fn) term
 (* --------------------------------------------------------------- *)
 
 (* ------------------------------------------------ *)
@@ -81,11 +85,13 @@ type raw_term = (string, string) term
 type raw_typ = (string, string) typ
 type raw_top_level_term = (string, string) top_level_term
 type raw_top_level_typ = (string, string) top_level_typ
+type raw_top_level_subtype = (string, string) top_level_subtype
 
 type nominal_term = (Atom.t, Atom.t) term
 type nominal_typ = (Atom.t, Atom.t) typ
 type nominal_top_level_term = (Atom.t, Atom.t) top_level_term
 type nominal_top_level_typ = (Atom.t, Atom.t) top_level_typ
+type nominal_top_level_subtype = (Atom.t, Atom.t) top_level_subtype
 (* ------------------------------------------------ *)
 
 (* ------------------------------------------------ *)

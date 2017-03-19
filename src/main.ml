@@ -154,7 +154,7 @@ let read_top_level_let x raw_t raw_typ =
       x
   in
   (* The inferred type must be a subtype of the wanted type. *)
-  if Subtype.is_subtype type_of_t nominal_typ
+  if Subtype.is_subtype ~context:(!typing_env) type_of_t nominal_typ
   then (
     (* If show_derivation_tree is activated, we print the typing derivation tree *)
     if !show_derivation_tree
@@ -239,30 +239,34 @@ let typing f =
 
 (** Action to check all algorithms for subtyping give the same results. *)
 let check_subtype_algorithms f =
-  let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
-  let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
-  let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
-  let history_with_refl, is_subtype_with_refl =
-    Subtype.subtype ~with_refl:true ~context:(!typing_env) nominal_s nominal_t
-  in
-  let history_without_refl, is_subtype_without_refl =
-    Subtype.subtype ~with_refl:false ~context:(!typing_env) nominal_s nominal_t
-  in
-  Printf.printf
-    "%s <: %s\n"
-    (Print.string_of_raw_typ raw_s)
-    (Print.string_of_raw_typ raw_t);
-  ANSITerminal.printf
-    (if is_subtype_without_refl = raw_is_subtype then success_style else error_style)
-    "    %s %s\n"
-    (if is_subtype_without_refl = raw_is_subtype then "✓" else "❌")
-    "Without REFL";
-  ANSITerminal.printf
-    (if is_subtype_with_refl = raw_is_subtype then success_style else error_style)
-    "    %s %s\n"
-    (if is_subtype_with_refl = raw_is_subtype then "✓" else "❌")
-    "With REFL";
-  print_endline "-------------------------"
+  let (raw_is_subtype, raw_couples) = Parser.top_level_subtype Lexer.prog f in
+  match raw_couples with
+  | Grammar.CoupleTypes(raw_s, raw_t) ->
+    let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
+    let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
+    let history_with_refl, is_subtype_with_refl =
+      Subtype.subtype ~with_refl:true ~context:(!typing_env) nominal_s nominal_t
+    in
+    let history_without_refl, is_subtype_without_refl =
+      Subtype.subtype ~with_refl:false ~context:(!typing_env) nominal_s nominal_t
+    in
+    Printf.printf
+      "%s <: %s\n"
+      (Print.string_of_raw_typ raw_s)
+      (Print.string_of_raw_typ raw_t);
+    ANSITerminal.printf
+      (if is_subtype_without_refl = raw_is_subtype then success_style else error_style)
+      "    %s %s\n"
+      (if is_subtype_without_refl = raw_is_subtype then "✓" else "❌")
+      "Without REFL";
+    ANSITerminal.printf
+      (if is_subtype_with_refl = raw_is_subtype then success_style else error_style)
+      "    %s %s\n"
+      (if is_subtype_with_refl = raw_is_subtype then "✓" else "❌")
+      "With REFL";
+    print_endline "-------------------------"
+  | Grammar.TopLevelLetSubtype (var, raw_typ, raw_term) ->
+    read_top_level_let var raw_term raw_typ
 
 (** Action to evaluate a file.
     NOTE: We can erase the types because we don't need it when evaluating.
@@ -275,14 +279,18 @@ let eval f =
     we want.
 *)
 let check_subtype ~with_refl f =
-  let (raw_is_subtype, raw_s, raw_t) = Parser.top_level_subtype Lexer.prog f in
-  let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
-  let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
-  let history, is_subtype =
-    Subtype.subtype ~with_refl ~context:(!typing_env) nominal_s nominal_t in
-  if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
-  print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
-  print_endline "-------------------------"
+  let (raw_is_subtype, raw_couple) = Parser.top_level_subtype Lexer.prog f in
+  match raw_couple with
+  | Grammar.CoupleTypes(raw_s, raw_t) ->
+    let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
+    let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
+    let history, is_subtype =
+      Subtype.subtype ~with_refl ~context:(!typing_env) nominal_s nominal_t in
+    if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
+    print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
+    print_endline "-------------------------"
+  | Grammar.TopLevelLetSubtype (var, raw_typ, raw_term) ->
+    read_top_level_let var raw_term raw_typ
 
 (** Action to read a file with list of terms. *)
 let read_term_file f =
@@ -299,7 +307,7 @@ let read_term_file f =
 (** Action to read a file with list of types. *)
 let read_type_file f =
   let raw_typ = Parser.top_level_type Lexer.prog f in
-  let nominal_typ = Grammar.import_typ AlphaLib.KitImport.empty raw_typ in
+  let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
   print_endline "Raw typ";
   Print.Style.raw_typ [ANSITerminal.cyan] raw_typ;
   print_endline "\nPrint nominal_typ";

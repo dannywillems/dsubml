@@ -26,7 +26,7 @@
 %start <Grammar.raw_top_level_term> top_level
 %start <Grammar.raw_typ> top_level_type
 %start <Grammar.raw_top_level_term * Grammar.raw_typ> top_level_check_typing
-%start <bool * Grammar.raw_typ * Grammar.raw_typ> top_level_subtype
+%start <bool * Grammar.raw_top_level_subtype> top_level_subtype
 %start <bool * Grammar.raw_top_level_typ> top_level_well_formed
 %%
 
@@ -56,8 +56,17 @@ top_level_let:
    sub-typing algorithm.
 *)
 top_level_subtype:
-| s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (true, s, t) }
-| s = rule_typ ; NOT_SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON { (false, s, t) }
+| s = rule_typ ; SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON
+  {
+    (true, Grammar.CoupleTypes(s, t))
+  }
+| s = rule_typ ; NOT_SUBTYPE ; t = rule_typ ; SEMICOLON ; SEMICOLON
+  {
+    (false, Grammar.CoupleTypes(s, t))
+  }
+| t = top_level_let { let (var, typ, term) = t in
+                      (false, Grammar.TopLevelLetSubtype(var, typ, term))
+                    }
 | EOF { raise End_of_file }
 
 (* Read a top level type. *)
