@@ -1,5 +1,5 @@
-B _build
-S src
+B _build/src/
+S src/
 PKG visitors
 PKG alphaLib
 PKG ANSITerminal
