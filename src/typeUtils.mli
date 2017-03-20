@@ -3,13 +3,14 @@ exception NotATypeDeclaration of Grammar.nominal_typ
 exception NotADependentFunction of Grammar.nominal_typ
 exception NotAValue of Grammar.nominal_term
 
-(** [tuple_of_type_declaration typ] returns the tuple (type_label, s, t) if the
-    given type [typ] is a type declaration (TypeDeclaration) where [type_label]
-    is a label, [s] the lower bound and [t] the upper bound.
+(** [tuple_of_type_declaration context typ] returns the tuple (type_label, s, t)
+    if the given type [typ] is a type declaration (TypeDeclaration) where
+    [type_label] is a label, [s] the lower bound and [t] the upper bound.
     If it's not a type declaration, an exception [NotATypeDeclaration] is raised
     with [typ] as parameter.
 *)
 val tuple_of_type_declaration :
+  ContextType.context ->
   Grammar.nominal_typ ->
   (Grammar.type_tag * Grammar.nominal_typ * Grammar.nominal_typ)
 

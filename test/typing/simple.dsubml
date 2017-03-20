@@ -36,3 +36,7 @@ let g = lambda(x : Nothing) x in
 
 (* Function returning a function *)
 (* lambda(x : Any) lambda(y : Any) (x y) *)
+
+(* This doesn't make sense because x.A is not well formed. *)
+let x : Nothing = Unimplemented;;
+lambda(y : x.A) y;;

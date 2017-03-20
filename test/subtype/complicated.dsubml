@@ -1,11 +1,74 @@
+(*
+  let M = struct
+    type A = module sig
+      type A = int.A .. Any
+    end
+  end;;
+
+  let N : M.A = { A = int.A };;
+*)
 let x :
   { A : { A : int.A .. Any } .. { A : int.A .. Any } }
   =
   { A = { A : int.A .. Any } };;
 
+(*
+  Notons qu'on peut définir le terme et le type souhaités avec (lambda(z : x.A)
+  z) { A = int.A }.
+*)
+
 let y : x.A = { A = int.A };;
 y.A <: int.A;;
 
+int.A <: y.A;;
+(*
+  Supposons que int <: float.
+
+  let M = struct
+    type A =
+      module sig
+        type A :
+          module sig
+            type A : int .. int
+          end
+          ..
+          module sig
+            type A : int .. float
+          end
+      end
+*)
+let x : {
+  A : {
+    A : {
+      A : int.A .. int.A
+    } .. {
+      A : int.A .. Any
+    }
+  } .. {
+    A : {
+      A : int.A .. int.A
+    } .. {
+      A : int.A .. Any
+    }
+  }
+}
+  = {
+  A = {
+    A : {
+      A : int.A .. int.A
+    } .. {
+      A : int.A .. Any
+    }
+  }
+};;
+
+let y : x.A = { A = { A : int.A .. int.A } };;
+
+let z : y.A = Unimplemented;;
+
+z.A <: int.A;;
+
+int.A <: z.A;;
 (*
 let f = lambda (y : x.A) lambda (z : y.B) z in
 f x;;

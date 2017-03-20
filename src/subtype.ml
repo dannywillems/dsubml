@@ -6,7 +6,6 @@ let rec subtype_internal history context s t =
      Γ ⊦ S <: TOP
   *)
   | (_, Grammar.TypeTop) ->
-    let () = print_endline "hello" in
     let subtyping_node =
       DerivationTree.{
         rule = "TOP";
@@ -76,6 +75,30 @@ let rec subtype_internal history context s t =
       ),
       String.equal tag1 tag2 && left_is_subtype && right_is_subtype
     )
+  (* SEL <:. SUB is allowed for upper bound.
+     Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
+     becomes
+     Γ ⊦ x : { A : L .. U } and Γ ⊦ U <: U' => Γ ⊦ x.A <: U'
+  *)
+  | (Grammar.TypeProjection(x, label_selected), u') ->
+    let subtyping_node =
+      DerivationTree.{
+        rule = "SEL <:";
+        env = context;
+        s = s;
+        t = t
+    } in
+    let type_of_x = ContextType.find x context in
+    let (label, l, u) =
+      TypeUtils.tuple_of_type_declaration context type_of_x
+    in
+    let derivation_tree_subtype, is_subtype =
+      subtype_internal history context u u'
+    in
+    (
+      DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
+      String.equal label label_selected && is_subtype
+    )
   (* <: SEL. SUB is allowed for lower bound.
      Γ ⊦ x : { A : L .. U } =>
      Γ ⊦ L <: x.A
@@ -99,7 +122,7 @@ let rec subtype_internal history context s t =
       ContextType.find x context
     in
     let (label, l', u) =
-      TypeUtils.tuple_of_type_declaration type_of_x
+      TypeUtils.tuple_of_type_declaration context type_of_x
     in
     let derivation_tree_subtype, is_subtype =
       subtype_internal history context l l'
@@ -108,31 +131,7 @@ let rec subtype_internal history context s t =
       DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
       String.equal label label_selected && is_subtype
     )
-  (* SEL <:. SUB is allowed for upper bound.
-     Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
-     becomes
-     Γ ⊦ x : { A : L .. U } and Γ ⊦ U <: U' => Γ ⊦ x.A <: U'
-  *)
-  | (Grammar.TypeProjection(x, label_selected), u') ->
-    let subtyping_node =
-      DerivationTree.{
-        rule = "SEL <:";
-        env = context;
-        s = s;
-        t = t
-    } in
-    let () = print_endline "hello" in
-    let type_of_x = ContextType.find x context in
-    let (label, l, u) =
-      TypeUtils.tuple_of_type_declaration type_of_x
-    in
-    let derivation_tree_subtype, is_subtype =
-      subtype_internal history context u u'
-    in
-    (
-      DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
-      String.equal label label_selected && is_subtype
-    )
+
   (* ALL <: ALL
      Γ ⊦ S2 <: S1 ∧ Γ, x : S2 ⊦ T1 <: T2 =>
      Γ ⊦ ∀(x : S1) T1 <: ∀(x : S2) T2
@@ -253,7 +252,7 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
       ContextType.find x context
     in
     let (label, l', u) =
-      TypeUtils.tuple_of_type_declaration type_of_x
+      TypeUtils.tuple_of_type_declaration context type_of_x
     in
     let derivation_tree_subtype, is_subtype =
       subtype_internal history context l l'
@@ -279,7 +278,7 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
       ContextType.find x context
     in
     let (label, l, u) =
-      TypeUtils.tuple_of_type_declaration type_of_x
+      TypeUtils.tuple_of_type_declaration context type_of_x
     in
     let derivation_tree_subtype, is_subtype =
       subtype_internal history context u u'
