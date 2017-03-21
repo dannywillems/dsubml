@@ -46,7 +46,7 @@ TODO
 
 ## Basic types and functions:
 
-- [ ] Integer.
+- [x] Integer.
 - [ ] Boolean.
 - [ ] test (if .. then .. else ..)
 
