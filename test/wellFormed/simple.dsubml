@@ -50,26 +50,26 @@ let x2 : x.A -> x.A = lambda(a : x.A) a;;
 (* -------------------------------------------------- *)
 (* ----- Type declaration in type declaration ----- *)
 (* Well typed upper bound. *)
-{ A : Nothing .. { B : x.A .. x.A } };;
+{ A : Nothing .. { A : x.A .. x.A } };;
 
 (* The lower bound is not a subtype of the upper bound. *)
-! { A : Any .. { B : x.A .. x.A } };;
+! { A : Any .. { A : x.A .. x.A } };;
 
 (* lower bound is a function and the upper bound a type declaration, not
   compatible.
 *)
-! { A : x2.A .. { B : x.A .. x.A } };;
+! { A : x2.A .. { A : x.A .. x.A } };;
 
 (*
    Two types declarations as bounds. The lower bound is not a sub-type of the upper
-bound because [x.A] is not comparable with [y.A].
+   bound because [x.A] is not comparable with [y.A].
 *)
-! { A : { B : x.A .. x.A } .. { B : x.A .. y.A } };;
+{ A : { A : x.A .. x.A } .. { A : x.A .. y.A } };;
 
 (*
    Nested type declarations in nested type declarations.
 *)
-{ A : { B : { C : x.A .. x.A } .. Any } .. Any };;
+{ A : { A : { A : x.A .. x.A } .. Any } .. Any };;
 
 let z : { A : Nothing .. Any } = Unimplemented;;
 let x : z.A = Unimplemented;;
