@@ -1,5 +1,6 @@
 type subtyping_node = {
   rule : string;
+  is_true : bool;
   env : ContextType.context;
   s : Grammar.nominal_typ;
   t : Grammar.nominal_typ;
@@ -28,7 +29,11 @@ let rec string_of_subtyping_derivation_tree level (t : subtyping_node t) = match
     Printf.sprintf
       "%s%s (%s ⊦ %s <: %s)\n%s"
       (" " ^* (level * 2))
-      v.rule
+      (ANSITerminal.sprintf
+         (if v.is_true then [ANSITerminal.green] else [ANSITerminal.red])
+         "%s"
+         v.rule
+      )
       (ContextType.Style.string_of_context [ANSITerminal.magenta] v.env)
       (Print.Style.string_of_raw_typ [ANSITerminal.cyan] (Grammar.show_typ v.s))
       (Print.Style.string_of_raw_typ [ANSITerminal.cyan] (Grammar.show_typ v.t))

@@ -1,5 +1,6 @@
 type subtyping_node = {
   rule : string;
+  is_true : bool;
   env : ContextType.context;
   s : Grammar.nominal_typ;
   t : Grammar.nominal_typ;
