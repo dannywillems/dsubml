@@ -50,6 +50,62 @@ let rec subtype_internal history context s t =
       DerivationTree.Node (subtyping_node, history),
       true
     )
+  (* UN-<: SEL <:*)
+  | Grammar.TypeProjection(x, label_x), Grammar.TypeProjection(y, label_y) ->
+    (* We first try SEL <: *)
+    let subtyping_node =
+      DerivationTree.{
+        rule = "UN-SEL <:";
+        env = context;
+        s = s;
+        t = t
+    } in
+    let type_of_x = ContextType.find x context in
+    let (label, l, u) =
+      TypeUtils.tuple_of_type_declaration context type_of_x
+    in
+    Printf.printf
+      "l : %s\nu : %s\n"
+      (Print.string_of_nominal_typ l)
+      (Print.string_of_nominal_typ u);
+    let derivation_tree_subtype, is_subtype =
+      subtype_internal history context u (Grammar.TypeProjection(y, label_y))
+    in (
+      (* If we succeed in proving x.A <: y.A by beginning with SEL <:, we return
+         this derivation
+      *)
+      if is_subtype
+      then (
+        DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
+        String.equal label label_x && is_subtype
+      )
+      else (
+        (* Else we try <: SEL *)
+        let subtyping_node =
+          DerivationTree.{
+            rule = "UN-<: SEL";
+            env = context;
+            s = s;
+            t = t
+          }
+        in
+        let type_of_y = ContextType.find y context in
+        let (label, l, u) =
+          TypeUtils.tuple_of_type_declaration context type_of_y
+        in
+        let derivation_tree_subtype, is_subtype =
+          subtype_internal history context (Grammar.TypeProjection(x, label_x)) l
+        in
+        (* And in every case, we return this derivation. *)
+        (* IMPROVEME:
+           It is more interesting to return all possible derivation
+           trees
+        *)
+        DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
+        String.equal label label_y && is_subtype
+      )
+    )
+
   (* TYP <: TYP
      Γ ⊦ S2 <: S1 ∧ Γ ⊦ T1 <: T2 =>
      Γ ⊦ { A : S1 .. T1 } <: { A : S2 .. T2 }
@@ -77,8 +133,7 @@ let rec subtype_internal history context s t =
     )
   (* SEL <:.
      SUB is allowed for upper bound. This rule unifies official SEL <: and SUB.
-     This rule unifies the SUB and SEL
-     <:. Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
+     Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
      becomes
      Γ ⊦ x : { A : L .. U } and Γ ⊦ U <: U' => Γ ⊦ x.A <: U'
   *)
