@@ -28,21 +28,10 @@ y.A !<: int.A;;
 (* But it's a super-type of int.A because int.A is its lower bound. *)
 int.A <: y.A;;
 
-(*
-  Supposons que int <: float.
-
-  let M = struct
-    type A =
-      module sig
-        type A :
-          module sig
-            type A : int .. int
-          end
-          ..
-          module sig
-            type A : int .. float
-          end
-      end
+(* A module x containing a nested module M which has
+   - as lower bound a nested module with lower bound int.A and upper bound
+     int.A
+   - as upper bound a nested module with lower bound int.A and upper bound Any.
 *)
 let x : {
   A : {
@@ -69,14 +58,41 @@ let x : {
   }
 };;
 
+(* We create a new module of type x.A (which is a module containing a module.) *)
 let y : x.A = { A = { A : int.A .. int.A } };;
 
+(* Returns true because y is a module which the type is between { A : int.A ..
+   int.A } and { A : int.A .. Any }.
+*)
+y.A <: { A : int.A .. Any };;
+
+(* Returns false because the upper bound of y.A is { A : int.A .. Any } *)
+y.A !<: { A : int.A .. int.A };;
+
+(* Returns true because it's the lower bound of y.A *)
+{ A : int.A .. int.A } <: y.A;;
+
+(* Returns false because it's the upper bound of y.A *)
+{ A : int.A .. Any } !<: y.A;;
+
+(* A new module of the type of the nested module in y *)
 let z : y.A = Unimplemented;;
 
+(* Upper bound of z.A is Any. *)
 z.A !<: int.A;;
 
+(* Lower bound of z.A is int.A *)
 int.A <: z.A;;
-(*
-let f = lambda (y : x.A) lambda (z : y.B) z in
-f x;;
-*)
+
+let x :
+  { A : { A : int.A -> unit.A .. Any } .. { A : int.A -> unit.A .. Any } }
+  =
+  { A = { A : int.A -> unit.A .. Any } };;
+
+(* It must return false because type declaration is contravariant wrt lower
+bound. The lower bounds are functions, and functions are contravariant wrt the
+type of the argument. It implies to prove Nothing -> Any <: int.A -> unit.A, but
+it implies to proof int.A <: Nothing, which is false; *)
+x.A !<: { A : Nothing -> Any .. Any };;
+
+x.A !<: { A : Any -> Any .. Any };;
