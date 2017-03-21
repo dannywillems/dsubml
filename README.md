@@ -69,7 +69,8 @@ TODO
 - [ ] Take an extend environment (Atom ->
   String) to recover the initial representation of a variable when an error
   occurs and is raised.
-
+- [ ] Trick when SEL <: and <: SEL can be both used.
+- [ ] Return all possible derivation trees.
 
 ## Typing.
 
