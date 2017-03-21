@@ -18,9 +18,16 @@ let x :
 *)
 
 let y : x.A = { A = int.A };;
-y.A <: int.A;;
 
+(* Even if y = { A = int.A }, as we promote the variable y to the type x.A which
+   is of type { A : int.A .. Any } .. { A : int.A .. Any }, y.A is not a
+   sub-type of int.A.
+*)
+y.A !<: int.A;;
+
+(* But it's a super-type of int.A because int.A is its lower bound. *)
 int.A <: y.A;;
+
 (*
   Supposons que int <: float.
 
@@ -66,7 +73,7 @@ let y : x.A = { A = { A : int.A .. int.A } };;
 
 let z : y.A = Unimplemented;;
 
-z.A <: int.A;;
+z.A !<: int.A;;
 
 int.A <: z.A;;
 (*
