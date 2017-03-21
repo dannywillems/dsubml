@@ -114,7 +114,7 @@ let rec type_of_internal history context term = match term with
     then (
       (* Here, we rename the variable [x1] (which is the variable in the for all
          type, by the given variable [y]). We don't substitute the variable by
-         the right types because it doesn't work with not well-typed types (like
+         the right types because it doesn't work with not well formed types (like
          x.A when x is of types Any).
       *)
       let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton z y) t in
