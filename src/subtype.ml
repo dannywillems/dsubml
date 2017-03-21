@@ -26,7 +26,7 @@ let rec subtype_internal history context s t =
         t = t
     } in
     (DerivationTree.Node (subtyping_node, history), true)
-  (* REFL-TYP.
+  (* UN-REFL-TYP.
      This rule is added from the official rule to be able to remove REFL.
      The missing typing rules was for type projections. We only need to check
      that the variables are represented by the same atom.
@@ -41,7 +41,7 @@ let rec subtype_internal history context s t =
     when (String.equal label_x label_y) && (AlphaLib.Atom.equal x y) ->
     let subtyping_node =
       DerivationTree.{
-        rule = "REFL-TYP";
+        rule = "UN-REFL-TYP";
         env = context;
         s = s;
         t = t
