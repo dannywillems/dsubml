@@ -18,7 +18,8 @@ let rec tuple_of_type_declaration context t = match t with
   | Grammar.TypeProjection(x, label) ->
     let type_of_x = ContextType.find x context in
     (* Recursive call to the algorithm. It is supposed it returns the tuple
-    containing the label, the lower bound and the upper bound. *)
+       containing the label, the lower bound and the upper bound.
+    *)
     let (l, s, t) = tuple_of_type_declaration context type_of_x in
     (* We check the labels are the same. Useless in Dsubml since there is only the label A *)
     tuple_of_type_declaration context t
