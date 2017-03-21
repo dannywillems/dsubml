@@ -1,7 +1,10 @@
 exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 
 let rec type_of_internal history context term = match term with
-  (* ALL-I *)
+  (* ALL-I
+     Γ, x : T ⊦ t : U ∧ x \notin FV(T) =>
+     Γ ⊦ λ(x : T) t ⊦ ∀(x : T) U
+  *)
   | Grammar.TermAbstraction(s_typ, (x, t)) ->
     let context' = ContextType.add x s_typ context in
     let u_history, type_of_t = type_of_internal history context' t in
@@ -31,7 +34,9 @@ let rec type_of_internal history context term = match term with
       ),
       typ
     )
-  (* TYP-I *)
+  (* TYP-I
+     Γ ⊦ { A = T } : { A : T .. T }
+  *)
   | Grammar.TermTypeTag(a, typ) ->
     let typ = Grammar.TypeDeclaration(a, typ, typ) in
     let typing_node = DerivationTree.{
@@ -47,7 +52,13 @@ let rec type_of_internal history context term = match term with
       ),
       typ
     )
-  (* LET *)
+  (* LET
+     Γ ⊦ t : T ∧
+     Γ, x : T ⊦ u : U ∧
+     x \notin FV(U)
+     =>
+     Γ ⊦ let x = t in u : U
+  *)
   | Grammar.TermLet(t, (x, u)) ->
     let left_history, t_typ = type_of_internal history context t in
     (* It implies that x has the type of t, i.e. t_typ *)
@@ -79,7 +90,9 @@ let rec type_of_internal history context term = match term with
       ),
       u_typ
     )
-  (* VAR *)
+  (* VAR
+     Γ, x : T, Γ' ⊦ x : T
+  *)
   | Grammar.TermVariable x ->
     let typ = ContextType.find x context in
     let typing_node = DerivationTree.{
@@ -95,7 +108,12 @@ let rec type_of_internal history context term = match term with
       ),
       typ
     )
-  (* ALL-E. *)
+  (* ALL-E.
+     Γ ⊦ x : ∀(z : S) : T ∧
+     Γ ⊦ y : S
+     =>
+     Γ ⊦ xy : [y := z]T
+  *)
   | Grammar.TermVarApplication(x, y) ->
     (* Hypothesis, get the corresponding types of x and y *)
     (* We can simply use [ContextType.find x context], but it's to avoid
@@ -144,7 +162,9 @@ let rec type_of_internal history context term = match term with
           )
         )
   (* ----- Unofficial typing rules ----- *)
-  (* UN-ASC *)
+  (* UN-ASC
+     Γ ⊦ t : T
+  *)
   | Grammar.TermAscription(t, typ_of_t) ->
     let typing_node = DerivationTree.{
         rule = "UN-ASC";
@@ -159,7 +179,9 @@ let rec type_of_internal history context term = match term with
       )
     in
     node, typ_of_t
-  (* UN-UNIMPLEMENTED *)
+  (* UN-UNIMPLEMENTED
+     Γ ⊦ Unimplemented : ⟂
+  *)
   | Grammar.TermUnimplemented ->
     let typing_node = DerivationTree.{
         rule = "UN-UNIMPLEMENTED";

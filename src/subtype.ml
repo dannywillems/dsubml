@@ -3,7 +3,7 @@ exception NotATypeDeclaration of Grammar.nominal_typ
 let rec subtype_internal history context s t =
   match (s, t) with
   (* TOP
-     Γ ⊦ S <: TOP
+     Γ ⊦ S <: ⊤
   *)
   | (_, Grammar.TypeTop) ->
     let subtyping_node =
@@ -15,7 +15,7 @@ let rec subtype_internal history context s t =
     } in
     (DerivationTree.Node (subtyping_node, history), true)
   (* BOTTOM
-     Γ ⊦ BOTTOM <: S
+     Γ ⊦ ⟂ <: S
   *)
   | (Grammar.TypeBottom, _) ->
     let subtyping_node =
@@ -75,8 +75,10 @@ let rec subtype_internal history context s t =
       ),
       String.equal tag1 tag2 && left_is_subtype && right_is_subtype
     )
-  (* SEL <:. SUB is allowed for upper bound.
-     Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
+  (* SEL <:.
+     SUB is allowed for upper bound. This rule unifies official SEL <: and SUB.
+     This rule unifies the SUB and SEL
+     <:. Γ ⊦ x : { A : L .. U } => Γ ⊦ x.A <: U
      becomes
      Γ ⊦ x : { A : L .. U } and Γ ⊦ U <: U' => Γ ⊦ x.A <: U'
   *)
@@ -99,7 +101,8 @@ let rec subtype_internal history context s t =
       DerivationTree.Node (subtyping_node, [derivation_tree_subtype]),
       String.equal label label_selected && is_subtype
     )
-  (* <: SEL. SUB is allowed for lower bound.
+  (* <: SEL.
+     SUB is allowed for lower bound. This rule unifies official <: SEL and SUB.
      Γ ⊦ x : { A : L .. U } =>
      Γ ⊦ L <: x.A
      becomes
