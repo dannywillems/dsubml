@@ -60,10 +60,6 @@ let rec subtype_internal history context s t =
     let (label, l, u) =
       TypeUtils.tuple_of_type_declaration context type_of_x
     in
-    Printf.printf
-      "l : %s\nu : %s\n"
-      (Print.string_of_nominal_typ l)
-      (Print.string_of_nominal_typ u);
     let derivation_tree_subtype, is_subtype =
       subtype_internal history context u (Grammar.TypeProjection(y, label_y))
     in
@@ -184,12 +180,6 @@ let rec subtype_internal history context s t =
     in
     let derivation_tree_subtype, is_subtype =
       subtype_internal history context l l'
-    in
-    let () =
-      Printf.printf "l %s\nl' %s\nu : %s\n"
-      (Print.string_of_nominal_typ l)
-      (Print.string_of_nominal_typ l')
-      (Print.string_of_nominal_typ u)
     in
     let subtyping_node =
       DerivationTree.{
