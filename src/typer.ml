@@ -1,4 +1,3 @@
-exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 
 let rec type_of_internal history context term = match term with
   (* ALL-I
@@ -150,7 +149,7 @@ let rec type_of_internal history context term = match term with
       node, typ
     )
     else raise
-        (TypeMismatch (
+        (Error.TypeMismatch (
             Printf.sprintf
               "ALL-E: %s must be a subtype of %s but it's of type %s."
               (AlphaLib.Atom.show y)

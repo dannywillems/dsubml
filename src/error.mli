@@ -16,4 +16,6 @@ exception SubtypeError of string * Grammar.nominal_typ * Grammar.nominal_typ
 *)
 exception AvoidanceProblem of string * AlphaLib.Atom.t * Grammar.nominal_typ
 
+exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
+
 val print : exn -> unit
