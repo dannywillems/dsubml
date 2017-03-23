@@ -38,6 +38,10 @@ top_level:
           let (var, typ, term) = t in
           Grammar.TopLevelLetTerm(var, typ, term)
         }
+| t = top_level_let_no_type {
+          let (var, term) = t in
+          Grammar.TopLevelLetTermNoType(var, term)
+        }
 | EOF { raise End_of_file }
 
 top_level_let:
@@ -52,6 +56,13 @@ top_level_let:
       (var, typ, term)
     }
 
+top_level_let_no_type:
+| LET ;
+  var = VAR ;
+  EQUAL ;
+  t = rule_term ;
+  SEMICOLON ;
+  SEMICOLON { (var, t) }
 (* A rule which can be used to read a file containing only types. Useful to try
    sub-typing algorithm.
 *)
@@ -67,6 +78,9 @@ top_level_subtype:
 | t = top_level_let { let (var, typ, term) = t in
                       (false, Grammar.TopLevelLetSubtype(var, typ, term))
                     }
+| t = top_level_let_no_type { let (var, term) = t in
+                              (false, Grammar.TopLevelLetSubtypeNoType(var, term))
+                            }
 | EOF { raise End_of_file }
 
 (* Read a top level type. *)
@@ -76,11 +90,15 @@ top_level_type:
 
 (* Read a top level check typing. *)
 top_level_check_typing:
-  | t = top_level_let {
+| t = top_level_let {
             let (var, typ, term) = t in
             (* We can use any type we want, it's not used. *)
             (Grammar.TopLevelLetTerm(var, typ, term), Grammar.TypeBottom)
           }
+| t = top_level_let_no_type { let (var, term) = t in
+                             Grammar.TopLevelLetTermNoType(var, term),
+                             Grammar.TypeBottom
+                           }
 | term = rule_term ;
   COLON ;
   typ = rule_typ ;
@@ -92,6 +110,9 @@ top_level_well_formed:
 | t = top_level_let { let (var, typ, term) = t in
                         (true, Grammar.TopLevelLetType(var, typ, term))
                       }
+| t = top_level_let_no_type { let (var, term) = t in
+                              (true, Grammar.TopLevelLetTypeNoType(var, term))
+                            }
 | EXCLAMATION ; t = rule_typ ; SEMICOLON ; SEMICOLON {
                                                (false, Grammar.Type(t))
                                              }

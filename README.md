@@ -58,6 +58,9 @@ TODO
     implementation (like `()` for `unit`). With this term, we can say a term
     exist without defining the meaning.
 - [x] Add `(term : Type)` with the typing rule: `Γ ⊦ t : T => Γ ⊦ (t : T) : T`
+- [x] Add `let x = t`.
+
+- [ ] Reorganize the grammar because it's very ugly!
 
 ## Subtyping.
 
@@ -70,6 +73,7 @@ TODO
   representation of a variable when an error occurs and is raised.
 - [x] Trick when `SEL <:` and `<: SEL` can be both used.
 - [ ] Return all possible derivation trees.
+- [x] Add `let x = t`.
 
 ## Typing.
 
@@ -78,6 +82,7 @@ TODO
 - [ ] Improve error message in var application when we have `x.A` (for the moment, we only have `x.A`, not what is `x.A`). Example
 - [ ] Take an extend environment (`Atom -> String`) to recover the initial
   representation of a variable when an error occurs and is raised.
+- [x] Add `let x = t`.
 
 ```
 let x = { A = Nothing } in
@@ -86,6 +91,12 @@ let f = lambda(y : x.A) y in
 (f y);;
 ```
 
+## Evaluation.
+
+- [ ] Add a syntax to check typing at runtime like 
+```
+[@check_typing type]
+```
 ## MISC
 
 - [x] Add a function `well_formed : env -> Grammar.nominal_typ -> bool`

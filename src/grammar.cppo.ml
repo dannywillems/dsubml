@@ -65,6 +65,7 @@ type ('bn, 'fn) top_level_term =
   | Term of ('bn, 'fn) term
   (* let x : T = t -> Top level definition. Must never appear in a term *)
   | TopLevelLetTerm of 'fn * ('bn, 'fn) typ * ('bn, 'fn) term
+  | TopLevelLetTermNoType of 'fn * ('bn, 'fn) term
 
 (* We also allow to use top level let expressions in a file using only types
    (for example sub-typing or well formed algorithms).
@@ -73,10 +74,12 @@ type ('bn, 'fn) top_level_typ =
   | Type of ('bn, 'fn) typ
   (* let x : T = t -> Top level definition. Must never appear in a term *)
   | TopLevelLetType of 'fn * ('bn, 'fn) typ * ('bn, 'fn) term
+  | TopLevelLetTypeNoType of 'fn * ('bn, 'fn) term
 
 type ('bn, 'fn) top_level_subtype =
   | CoupleTypes of ('bn, 'fn) typ * ('bn, 'fn) typ
   | TopLevelLetSubtype of 'fn * ('bn, 'fn) typ * ('bn, 'fn) term
+  | TopLevelLetSubtypeNoType of 'fn * ('bn, 'fn) term
 (* --------------------------------------------------------------- *)
 
 (* ------------------------------------------------ *)
