@@ -28,7 +28,7 @@
 (for all(x : Nothing) Nothing);;
 
 (* To use the type x.A. *)
-let x : { A : Nothing .. Nothing } = { A = Nothing };;
+let x = { A = Nothing };;
 (lambda(y : x.A) y)
 :
 (x.A -> x.A);;
@@ -44,7 +44,7 @@ in polymorphic_identity)
   With an application to { A = Nothing }. Note that to avoid the avoidance
   problem, we need to define the variable at the top level.
 *)
-let y : { A : Nothing .. Nothing } = { A = Nothing };;
+let y = { A = Nothing };;
 
 (let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
@@ -57,7 +57,7 @@ y.A -> y.A;;
   With an application to { A = Any }. Note that to avoid the avoidance
   problem, we need to define the variable at the top level.
 *)
-let y : { A : Any .. Any} = { A = Any };;
+let y = { A = Any };;
 
 (let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)

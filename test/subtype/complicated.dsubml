@@ -7,9 +7,7 @@
 
   let N : M.A = { A = int.A };;
 *)
-let x :
-  { A : { A : int.A .. Any } .. { A : int.A .. Any } }
-  =
+let x =
   { A = { A : int.A .. Any } };;
 
 (*
@@ -33,22 +31,7 @@ int.A <: y.A;;
      int.A
    - as upper bound a nested module with lower bound int.A and upper bound Any.
 *)
-let x : {
-  A : {
-    A : {
-      A : int.A .. int.A
-    } .. {
-      A : int.A .. Any
-    }
-  } .. {
-    A : {
-      A : int.A .. int.A
-    } .. {
-      A : int.A .. Any
-    }
-  }
-}
-  = {
+let x = {
   A = {
     A : {
       A : int.A .. int.A
@@ -84,9 +67,7 @@ z.A !<: int.A;;
 (* Lower bound of z.A is int.A *)
 int.A <: z.A;;
 
-let x :
-  { A : { A : int.A -> unit.A .. Any } .. { A : int.A -> unit.A .. Any } }
-  =
+let x =
   { A = { A : int.A -> unit.A .. Any } };;
 
 (* It must return false because type declaration is contravariant wrt lower
