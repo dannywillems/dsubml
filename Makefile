@@ -59,12 +59,28 @@ test_subtype:
 	@ ./$(TARGET) -f test/subtype/simple.dsubml \
                 -a subtype_same_output $(TARGET_OPTION)
 	@ echo "\n---------------------------------------\n"
+	@ echo "Complicated tests : without REFL"
+	@ ./$(TARGET) -f test/subtype/complicated.dsubml \
+                -a subtype --use-stdlib -v
+	@ echo "\n---------------------------------------\n"
+	@ echo "Complicated tests : with REFL"
+	@ ./$(TARGET) -f test/subtype/complicated.dsubml \
+                -a subtype_with_REFL --use-stdlib -v
+	@ echo "\n---------------------------------------\n"
+	@ echo "Complicated tests : same output"
+	@ ./$(TARGET) -f test/subtype/complicated.dsubml \
+                -a subtype_same_output --use-stdlib -v
+	@ echo "\n---------------------------------------\n"
 
 test_typing:
 	@ echo "----- Typing Algorithm -----"
 	@ echo "Simple tests."
 	@ ./$(TARGET) -f test/typing/simple.dsubml \
                 -a typing $(TARGET_OPTION)
+	@ echo "\n---------------------------------------\n"
+	@ echo "Complicated tests."
+	@ ./$(TARGET) -f test/typing/complicated.dsubml \
+                -a typing --use-stdlib
 	@ echo "\n---------------------------------------\n"
 
 test_check_typing:
