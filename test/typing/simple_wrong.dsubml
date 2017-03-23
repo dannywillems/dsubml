@@ -2,18 +2,18 @@
 
 (* To use the type x.A. This is a case of the avoidance problem because x.A is used for the type of y. *)
 let x = { A = Nothing } in
-lambda(y : x.A) y;;
+lambda(y : x.A) y;; [@error Error.AvoidanceProblem]
 
 (*
     Another case of the avoidance problem with the polymorphic identity because
-    the resulting type is for all(y : y.A) y.A *) but y is not accessible from
+    the resulting type is for all(y : y.A) y.A but y is not accessible from
     outside.
 *)
 let y  = { A = Nothing } in
 let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
-(polymorphic_identity y);;
+(polymorphic_identity y);; [@error Error.AvoidanceProblem]
 
 (*
      Same than above but now y is of type { A : Any .. Any }.
@@ -22,12 +22,11 @@ let y  = { A = Any } in
 let polymorphic_identity =
   (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
 in
-(polymorphic_identity y);;
+(polymorphic_identity y);; [@error Error.AvoidanceProblem]
 
 
 let x = { A = Nothing } in
 let y = { A = Any } in
 let f = lambda(y : x.A) y in
-(f y);;
-*)
+(f y);; [@error Error.SubtypeError]
 
