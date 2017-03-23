@@ -48,7 +48,7 @@ TODO
 
 - [x] Integer.
 - [ ] Boolean.
-- [ ] test (if .. then .. else ..)
+- [ ] test (`if .. then .. else ..`)
 
 ## Grammar.
 
@@ -57,27 +57,26 @@ TODO
   - [x] Add a `magic` term of type `Nothing` to define a term which has no
     implementation (like `()` for `unit`). With this term, we can say a term
     exist without defining the meaning.
-- [x] Add (term : Type) with the typing rule: Γ ⊦ t : T => Γ ⊦ (t : T) : T
+- [x] Add `(term : Type)` with the typing rule: `Γ ⊦ t : T => Γ ⊦ (t : T) : T`
 
 ## Subtyping.
 
 - [x] Check all results.
 - [x] Automatic verification for tests.
 - [x] Add an history to get the derivation tree.
-- [ ] Use SUB in select rules.
+- [ ] Use `SUB` in select rules.
 - [x] Add an action to check if each algorithm outputs the same result.
-- [ ] Take an extend environment (Atom ->
-  String) to recover the initial representation of a variable when an error
-  occurs and is raised.
-- [x] Trick when SEL <: and <: SEL can be both used.
+- [ ] Take an extend environment (`Atom -> String`) to recover the initial
+  representation of a variable when an error occurs and is raised.
+- [x] Trick when `SEL <:` and `<: SEL` can be both used.
 - [ ] Return all possible derivation trees.
 
 ## Typing.
 
 - [x] In `let x = s in t`, check that the variable doesn't appear in the type of
   `t`. This is the avoidance problem.
-- [ ] Improve error message in var application when we have x.A (for the moment, we only have x.A, not what is x.A). Example
-- [ ] Take an extend environment (Atom -> String) to recover the initial
+- [ ] Improve error message in var application when we have `x.A` (for the moment, we only have `x.A`, not what is `x.A`). Example
+- [ ] Take an extend environment (`Atom -> String`) to recover the initial
   representation of a variable when an error occurs and is raised.
 
 ```
@@ -90,11 +89,11 @@ let f = lambda(y : x.A) y in
 ## MISC
 
 - [x] Add a function `well_formed : env -> Grammar.nominal_typ -> bool`
-  returning `true` if the given nominal type is well formed. We say a type T is
-  not well formed if T is the form x.A and x is not a variable of type { A :
-  Nothing .. Any }.
+  returning `true` if the given nominal type is well formed. We say a type `T` is
+  not well formed if `T` is the form `x.A` and `x` is not a variable of type `{ A :
+  Nothing .. Any }`.
 - [x] Be able to extend the environment with the syntax `let x : T = t`.
-- [x] Use a default environment (like `Pervasives` in OCaml) while reading a files.
+- [x] Use a default environment (like `Pervasives` in OCaml) while reading a file.
 - [ ] Emacs mode.
 
 ## Surface language.
