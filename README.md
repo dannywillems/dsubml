@@ -67,7 +67,7 @@ TODO
 - [x] Check all results.
 - [x] Automatic verification for tests.
 - [x] Add an history to get the derivation tree.
-- [ ] Use `SUB` in select rules.
+- [x] Use `SUB` in select rules.
 - [x] Add an action to check if each algorithm outputs the same result.
 - [ ] Take an extend environment (`Atom -> String`) to recover the initial
   representation of a variable when an error occurs and is raised.
@@ -84,19 +84,13 @@ TODO
   representation of a variable when an error occurs and is raised.
 - [x] Add `let x = t`.
 
-```
-let x = { A = Nothing } in
-let y = { A = Any } in
-let f = lambda(y : x.A) y in
-(f y);;
-```
-
 ## Evaluation.
 
 - [ ] Add a syntax to check typing at runtime like 
 ```
 [@check_typing type]
 ```
+
 ## MISC
 
 - [x] Add a function `well_formed : env -> Grammar.nominal_typ -> bool`
