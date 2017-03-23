@@ -1,0 +1,11 @@
+(* We define a module with a nested module. *)
+let x = { A = { A : int.A -> string.A .. Any } };;
+
+(* Trying to apply to a function a module which is a subtype of the argument.
+   y <: x.A
+*)
+let f = lambda (z : x.A) z;;
+
+let y = { A = int.A -> string.A } in
+let f = lambda (z : x.A) z in
+f y;;
