@@ -16,8 +16,7 @@ let rec type_of_internal history context term = match term with
         typ = typ
       }
     in
-    let fa_typ = Grammar.fa_typ s_typ in
-    if AlphaLib.Atom.Set.mem x fa_typ
+    if Grammar.occurs_typ x s_typ
     then raise (Error.AvoidanceProblem(
         (Printf.sprintf
            "%s appears in %s."
@@ -72,8 +71,7 @@ let rec type_of_internal history context term = match term with
         typ = u_typ
       }
     in
-    let fa_typ = Grammar.fa_typ u_typ in
-    if AlphaLib.Atom.Set.mem x fa_typ
+    if Grammar.occurs_typ x u_typ
     then raise (Error.AvoidanceProblem(
         (Printf.sprintf
            "%s appears in %s."
