@@ -2,13 +2,13 @@ exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 
 let rec type_of_internal history context term = match term with
   (* ALL-I
-     Γ, x : T ⊦ t : U ∧ x \notin FV(T) =>
-     Γ ⊦ λ(x : T) t ⊦ ∀(x : T) U
+     Γ, x : S ⊦ t : U ∧ x \notin FV(S) =>
+     Γ ⊦ λ(x : S) t ⊦ ∀(x : S) U'
   *)
-  | Grammar.TermAbstraction(s_typ, (x, t)) ->
-    let context' = ContextType.add x s_typ context in
-    let u_history, type_of_t = type_of_internal history context' t in
-    let typ = Grammar.TypeDependentFunction(s_typ, (x, type_of_t)) in
+  | Grammar.TermAbstraction(s, (x, t)) ->
+    let context' = ContextType.add x s context in
+    let u_history, u = type_of_internal history context' t in
+    let typ = Grammar.TypeDependentFunction(s, (x, u)) in
     let typing_node = DerivationTree.{
         rule = "ALL-I";
         env = context;
@@ -16,15 +16,15 @@ let rec type_of_internal history context term = match term with
         typ = typ
       }
     in
-    if Grammar.occurs_typ x s_typ
+    if Grammar.occurs_typ x s
     then raise (Error.AvoidanceProblem(
         (Printf.sprintf
            "%s appears in %s."
            (AlphaLib.Atom.show x)
-           (Print.string_of_nominal_typ s_typ)
+           (Print.string_of_nominal_typ s)
         ),
         x,
-        s_typ
+        s
       ))
     else (
       DerivationTree.Node(
