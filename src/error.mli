@@ -15,3 +15,5 @@ exception SubtypeError of string * Grammar.nominal_typ * Grammar.nominal_typ
     localement.
 *)
 exception AvoidanceProblem of string * AlphaLib.Atom.t * Grammar.nominal_typ
+
+val print : exn -> unit
