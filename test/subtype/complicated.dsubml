@@ -17,11 +17,16 @@ let x =
 
 let y : x.A = { A = int.A };;
 
+let y' = { A = int.A };;
 (* Even if y = { A = int.A }, as we promote the variable y to the type x.A which
    is of type { A : int.A .. Any } .. { A : int.A .. Any }, y.A is not a
    sub-type of int.A.
 *)
 y.A !<: int.A;;
+
+y'.A <: int.A;;
+
+int.A <: y'.A;;
 
 (* But it's a super-type of int.A because int.A is its lower bound. *)
 int.A <: y.A;;
@@ -59,7 +64,7 @@ y.A !<: { A : int.A .. int.A };;
 { A : int.A .. Any } !<: y.A;;
 
 (* A new module of the type of the nested module in y *)
-let z : y.A = Unimplemented;;
+let z : y.A = { A = int.A };;
 
 (* Upper bound of z.A is Any. *)
 z.A !<: int.A;;
@@ -71,9 +76,54 @@ let x =
   { A = { A : int.A -> unit.A .. Any } };;
 
 (* It must return false because type declaration is contravariant wrt lower
-bound. The lower bounds are functions, and functions are contravariant wrt the
-type of the argument. It implies to prove Nothing -> Any <: int.A -> unit.A, but
-it implies to proof int.A <: Nothing, which is false; *)
+   bound. The lower bounds are functions, and functions are contravariant wrt the
+   type of the argument. It implies to prove Nothing -> Any <: int.A -> unit.A, but
+   it implies to proof int.A <: Nothing, which is false;
+*)
 x.A !<: { A : Nothing -> Any .. Any };;
 
 x.A !<: { A : Any -> Any .. Any };;
+
+(* Examples with a type between the lower bound and the upper bound*)
+let x =
+  { A = { A : Any -> Any .. Nothing -> Any } };;
+
+let y : x.A = { A = int.A -> Any };;
+
+y.A !<: { A : int.A -> Any .. Any};;
+
+{ A : int.A -> Any .. Any} !<: y.A;;
+
+let z = {
+  A = { A : int.A -> Any .. y.A }
+};;
+
+z.A !<: { A : Nothing -> Any .. Any };;
+
+(* w is of type { A : int.A -> Any .. y.A } *)
+let w : z.A = { A = int.A -> Any };;
+
+(* It is false because we need to proof Nothing -> Any <: int.A -> Any which is
+   false.
+*)
+int.A -> Any !<: w.A;;
+
+(* Oh, it's not well formed...
+let x = { A = {
+    A : {
+      A : Any -> int.A .. Nothing -> Any
+    } .. {
+        A : Any -> Nothing .. int.A -> Any
+      }
+  }
+};;
+
+let y : x.A = { A = { A : Any -> Nothing .. int.A -> Any } };;
+
+{ A : Any -> Any .. Nothing -> Any } <: y.A;;
+(* y.A <: { A : Any -> int.A .. Nothing -> Any };; *)
+
+let z : y.A = { A = Any -> Any };;
+
+Any -> int.A <: z.A;;
+*)
