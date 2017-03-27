@@ -3,7 +3,7 @@ exception NotADependentFunction of Grammar.nominal_typ
 exception NotAValue of Grammar.nominal_term
 
 (* Need to find an invariant. We suppose the [t] is well formed. *)
-let rec tuple_of_type_declaration context t = match t with
+let rec tuple_of_type_declaration ?(select_bound=`Upper) context t = match t with
   (* The type of the given variable is a module. *)
   | Grammar.TypeDeclaration(l, s, t) ->
     (l, s, t)
@@ -22,7 +22,9 @@ let rec tuple_of_type_declaration context t = match t with
     *)
     let (l, s, t) = tuple_of_type_declaration context type_of_x in
     (* We check the labels are the same. Useless in Dsubml since there is only the label A *)
-    tuple_of_type_declaration context t
+    (match select_bound with
+     | `Lower -> tuple_of_type_declaration context s
+     | `Upper -> tuple_of_type_declaration context t)
   | _ -> raise (NotATypeDeclaration t)
 
 let tuple_of_dependent_function t = match t with

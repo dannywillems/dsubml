@@ -10,6 +10,7 @@ exception NotAValue of Grammar.nominal_term
     with [typ] as parameter.
 *)
 val tuple_of_type_declaration :
+  ?select_bound:[< `Lower | `Upper > `Upper] ->
   ContextType.context ->
   Grammar.nominal_typ ->
   (Grammar.type_tag * Grammar.nominal_typ * Grammar.nominal_typ)
