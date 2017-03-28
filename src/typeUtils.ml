@@ -31,7 +31,7 @@ let rec best_bound_for_type_declaration ~direction ~label context t = match t wi
      | Upper -> Some t)
   (* Else, it's a path selection type. *)
   | Grammar.TypeProjection(x, label) ->
-    let type_of_x : Grammar.nominal_typ = ContextType.find x context in
+    let type_of_x = ContextType.find x context in
     (* Recursive call to the algorithm. It is supposed to return the greatest
        lower bound (resp. the least upper bound) of x wrt the label.
        [u'] is the best bound for the type of [x] and with the given label.
