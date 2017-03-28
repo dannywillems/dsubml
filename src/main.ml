@@ -129,45 +129,18 @@ let print_is_well_formed raw_is_well_formed is_well_formed raw_typ =
   if not is_right then exit(1)
 
 
-(* ------------------------------------------------- *)
-let read_top_level_let_no_type x raw_term =
-  let nominal_term = Grammar.import_term
-      (!kit_import_env)
-      raw_term
-  in
-  let history, type_of_term =
-    Typer.type_of
-      ~context:(!typing_env)
-      nominal_term
-  in
-  let extended_kit_import_env, atom_x =
-    AlphaLib.KitImport.extend
-      (!kit_import_env)
-      x
-  in
-  if !show_derivation_tree
-  then DerivationTree.print_typing_derivation_tree history;
-  print_raw_term_with_nominal_typ (Grammar.TermVariable x) type_of_term;
-  kit_import_env := extended_kit_import_env;
-  typing_env := ContextType.add atom_x type_of_term (!typing_env)
-
-let read_top_level_let x raw_t raw_typ =
+let read_top_level_let x raw_term =
   (* Convert raw term/type to nominal term/type using the import environment. *)
-  let nominal_t =
+  let nominal_term =
     Grammar.import_term
       (!kit_import_env)
-      raw_t
-  in
-  let nominal_typ =
-    Grammar.import_typ
-      (!kit_import_env)
-      raw_typ
+      raw_term
   in
   (* Infer the type of t *)
   let history, type_of_t =
     Typer.type_of
       ~context:(!typing_env)
-      nominal_t
+      nominal_term
   in
   if !show_derivation_tree
   then DerivationTree.print_typing_derivation_tree history;
@@ -176,33 +149,8 @@ let read_top_level_let x raw_t raw_typ =
       (!kit_import_env)
       x
   in
-  (* The inferred type must be a subtype of the wanted type. *)
-  let history_subtype, is_subtype =
-    Subtype.subtype ~context:(!typing_env) type_of_t nominal_typ
-  in
-  if !show_derivation_tree
-  then DerivationTree.print_subtyping_derivation_tree history_subtype;
-  if is_subtype
-  then (
-    (* If show_derivation_tree is activated, we print the typing derivation tree *)
-    if !show_derivation_tree
-    then DerivationTree.print_typing_derivation_tree history;
-    print_raw_term_with_nominal_typ (Grammar.TermVariable x) nominal_typ;
-    kit_import_env := extended_kit_import_env;
-    typing_env := ContextType.add atom_x nominal_typ (!typing_env)
-  )
-  else
-    raise (
-      Error.Subtype (
-        (Printf.sprintf
-           "%s is not a subtype of %s"
-           (Print.string_of_nominal_typ type_of_t)
-           (Print.string_of_raw_typ raw_typ)
-        ),
-        type_of_t,
-        nominal_typ
-      )
-    )
+  kit_import_env := extended_kit_import_env;
+  typing_env := ContextType.add atom_x type_of_t (!typing_env)
 
 (* The main loop to execute actions. *)
 let rec execute action lexbuf =
@@ -227,10 +175,8 @@ let well_formed f =
     let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
     let is_well_formed = WellFormed.typ (!typing_env) nominal_typ in
     print_is_well_formed raw_is_well_formed is_well_formed raw_typ
-  | Grammar.TopLevelLetType(x, raw_typ, raw_term) ->
-    read_top_level_let x raw_term raw_typ
-  | Grammar.TopLevelLetTypeNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetType(x, raw_term) ->
+    read_top_level_let x raw_term
 
 
 (** Action to type check. *)
@@ -246,10 +192,8 @@ let check_typing f =
     let same_type = Grammar.equiv_typ derived_typ nominal_typ in
     if !show_derivation_tree then DerivationTree.print_typing_derivation_tree history;
     print_derived_and_attended_types derived_typ nominal_typ nominal_term same_type
-  | Grammar.TopLevelLetTerm(x, raw_typ, raw_term) ->
-    read_top_level_let x raw_term raw_typ
-  | Grammar.TopLevelLetTermNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetTerm(x, raw_term) ->
+    read_top_level_let x raw_term
 
 (** Action to call the typechecker *)
 let typing f =
@@ -269,10 +213,8 @@ let typing f =
     then DerivationTree.print_typing_derivation_tree history;
     print_raw_term_with_nominal_typ raw_t type_of_t
     (* let x : T = t. Top level expressions. Can not appear in other expressions. *)
-  | Grammar.TopLevelLetTerm(x, raw_typ, raw_term) ->
-    read_top_level_let x raw_term raw_typ
-  | Grammar.TopLevelLetTermNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetTerm(x, raw_term) ->
+    read_top_level_let x raw_term
 
 
 (** Action to check all algorithms for subtyping give the same results. *)
@@ -303,10 +245,8 @@ let check_subtype_algorithms f =
       (if is_subtype_with_refl = raw_is_subtype then "✓" else "❌")
       "With REFL";
     print_endline "-------------------------"
-  | Grammar.TopLevelLetSubtype (var, raw_typ, raw_term) ->
-    read_top_level_let var raw_term raw_typ
-  | Grammar.TopLevelLetSubtypeNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetSubtype (var, raw_term) ->
+    read_top_level_let var raw_term
 
 (** Action to evaluate a file.
     NOTE: We can erase the types because we don't need it when evaluating.
@@ -331,10 +271,8 @@ let check_subtype ~with_refl f =
     if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
     print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
     print_endline "-------------------------"
-  | Grammar.TopLevelLetSubtype (var, raw_typ, raw_term) ->
-    read_top_level_let var raw_term raw_typ
-  | Grammar.TopLevelLetSubtypeNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetSubtype (var, raw_term) ->
+    read_top_level_let var raw_term
 
 (** Action to read a file with list of terms. *)
 let read_term_file f =
@@ -346,9 +284,8 @@ let read_term_file f =
     print_endline "\nPrint nominal_term";
     Print.Style.nominal_term [ANSITerminal.blue] nominal_term;
     print_endline "\n-------------------------"
-  | Grammar.TopLevelLetTerm (x, typ, term) -> () (* TODO *)
-  | Grammar.TopLevelLetTermNoType (var, raw_term) ->
-    read_top_level_let_no_type var raw_term
+  | Grammar.TopLevelLetTerm (var, raw_term) ->
+    read_top_level_let var raw_term
 
 
 (** Action to read a file with list of types. *)

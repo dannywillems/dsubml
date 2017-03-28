@@ -35,16 +35,20 @@
 top_level:
 | t = rule_term ; SEMICOLON ; SEMICOLON { Grammar.Term(t) }
 | t = top_level_let {
-          let (var, typ, term) = t in
-          Grammar.TopLevelLetTerm(var, typ, term)
-        }
-| t = top_level_let_no_type {
           let (var, term) = t in
-          Grammar.TopLevelLetTermNoType(var, term)
+          Grammar.TopLevelLetTerm(var, term)
         }
 | EOF { raise End_of_file }
 
 top_level_let:
+| LET ;
+  var = VAR ;
+  EQUAL ;
+  term = rule_term ;
+  SEMICOLON ;
+  SEMICOLON {
+      (var, term)
+    }
 | LET ;
   var = VAR ;
   COLON ;
@@ -53,16 +57,9 @@ top_level_let:
   term = rule_term ;
   SEMICOLON ;
   SEMICOLON {
-      (var, typ, term)
+      (var, Grammar.TermAscription(term, typ))
     }
 
-top_level_let_no_type:
-| LET ;
-  var = VAR ;
-  EQUAL ;
-  t = rule_term ;
-  SEMICOLON ;
-  SEMICOLON { (var, t) }
 (* A rule which can be used to read a file containing only types. Useful to try
    sub-typing algorithm.
 *)
@@ -75,12 +72,9 @@ top_level_subtype:
   {
     (false, Grammar.CoupleTypes(s, t))
   }
-| t = top_level_let { let (var, typ, term) = t in
-                      (false, Grammar.TopLevelLetSubtype(var, typ, term))
+| t = top_level_let { let (var, term) = t in
+                      (false, Grammar.TopLevelLetSubtype(var, term))
                     }
-| t = top_level_let_no_type { let (var, term) = t in
-                              (false, Grammar.TopLevelLetSubtypeNoType(var, term))
-                            }
 | EOF { raise End_of_file }
 
 (* Read a top level type. *)
@@ -91,14 +85,10 @@ top_level_type:
 (* Read a top level check typing. *)
 top_level_check_typing:
 | t = top_level_let {
-            let (var, typ, term) = t in
+            let (var, term) = t in
             (* We can use any type we want, it's not used. *)
-            (Grammar.TopLevelLetTerm(var, typ, term), Grammar.TypeBottom)
+            (Grammar.TopLevelLetTerm(var, term), Grammar.TypeBottom)
           }
-| t = top_level_let_no_type { let (var, term) = t in
-                             Grammar.TopLevelLetTermNoType(var, term),
-                             Grammar.TypeBottom
-                           }
 | term = rule_term ;
   COLON ;
   typ = rule_typ ;
@@ -107,12 +97,9 @@ top_level_check_typing:
 | EOF { raise End_of_file }
 
 top_level_well_formed:
-| t = top_level_let { let (var, typ, term) = t in
-                        (true, Grammar.TopLevelLetType(var, typ, term))
+| t = top_level_let { let (var, term) = t in
+                        (true, Grammar.TopLevelLetType(var, term))
                       }
-| t = top_level_let_no_type { let (var, term) = t in
-                              (true, Grammar.TopLevelLetTypeNoType(var, term))
-                            }
 | EXCLAMATION ; t = rule_typ ; SEMICOLON ; SEMICOLON {
                                                (false, Grammar.Type(t))
                                              }

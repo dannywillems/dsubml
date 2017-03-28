@@ -59,7 +59,7 @@ TODO
 - [x] Add `(term : Type)` with the typing rule: `Γ ⊦ t : T => Γ ⊦ (t : T) : T`
 - [x] Add `let x = t`.
 
-- [ ] Reorganize the grammar because it's very ugly! `let x : T = t` is
+- [x] Reorganize the grammar because it's very ugly! `let x : T = t` is
   equivalent to `let x = (t : T)`.
 - [ ] Type label can be any string beginning with a capital letter. It implies to remove all check about labels.
 
