@@ -3,17 +3,45 @@ exception NotATypeDeclaration of Grammar.nominal_typ
 exception NotADependentFunction of Grammar.nominal_typ
 exception NotAValue of Grammar.nominal_term
 
-(** [tuple_of_type_declaration context typ] returns the tuple (type_label, s, t)
-    if the given type [typ] is a type declaration (TypeDeclaration) where
-    [type_label] is a label, [s] the lower bound and [t] the upper bound.
-    If it's not a type declaration, an exception [NotATypeDeclaration] is raised
-    with [typ] as parameter.
+type direction =
+  | Upper
+  | Lower
+
+(** [best_bound_for_type_declaration ~direction ~label context typ] returns the
+    best bound (as an option) appearing in a type declaration (best = least
+    upper if [direction] = [Upper] and greatest lower if [direction] = [Lower])
+    for the given type [typ]. If no such type exist, [None] is return.
+
+    In other words, in the case of [direction] = [Upper], this algorithm returns
+    the least U such as [typ] < { A : L .. U }. In the case of [direction] =
+    [Lower], it returns the greatest L such as { A : L .. U } <: [typ].
+
+    The parameter [~label] is to check the type label.
 *)
-val tuple_of_type_declaration :
-  ?select_bound:[< `Lower | `Upper > `Upper] ->
+val best_bound_for_type_declaration :
+  direction:direction ->
+  label:Grammar.type_tag ->
   ContextType.context ->
   Grammar.nominal_typ ->
-  (Grammar.type_tag * Grammar.nominal_typ * Grammar.nominal_typ)
+  Grammar.nominal_typ option
+
+(** [least_upper_bound ~label context typ] is an alias to [best_bound
+    ~direction:Upper ~label context typ].
+*)
+val least_upper_bound :
+  label:Grammar.type_tag ->
+  ContextType.context ->
+  Grammar.nominal_typ ->
+  Grammar.nominal_typ option
+
+(** [greatest_lower_bound ~label context typ] is an alias to [best_bound
+    ~direction:Lower ~label context typ].
+*)
+val greatest_lower_bound :
+  label:Grammar.type_tag ->
+  ContextType.context ->
+  Grammar.nominal_typ ->
+  Grammar.nominal_typ option
 
 (** [tuple_of_dependent_function typ] returns the tuple (s, (x, t)) if the
     given type [typ] is a dependent function (TypeDependentFunction) where [s]
@@ -50,3 +78,4 @@ val is_type_declaration :
 val as_value :
   Grammar.nominal_term ->
   Grammar.nominal_term
+
