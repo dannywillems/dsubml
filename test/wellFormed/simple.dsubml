@@ -1,7 +1,7 @@
 (* -------------------------------------------------- *)
 (* ----- Type projection ----- *)
 (* Module with a type A equal to Nothing. *)
-let x : { A : Nothing .. Nothing } = { A = Nothing };;
+let x = { A = Nothing };;
 x.A;;
 
 (* The special case Nothing. *)
@@ -40,7 +40,7 @@ x.A -> y.A;;
 ! { A : z.A .. z.A };;
 
 (* Try to get the type tag A on a function *)
-let x2 : x.A -> x.A = lambda(a : x.A) a;;
+let x2 = lambda(a : x.A) a;;
 ! x2.A;;
 
 (* A bound is not a well formed type function. *)
@@ -51,20 +51,6 @@ let x2 : x.A -> x.A = lambda(a : x.A) a;;
 (* ----- Type declaration in type declaration ----- *)
 (* Well typed upper bound. *)
 { A : Nothing .. { A : x.A .. x.A } };;
-
-(* The lower bound is not a subtype of the upper bound. *)
-! { A : Any .. { A : x.A .. x.A } };;
-
-(* lower bound is a function and the upper bound a type declaration, not
-  compatible.
-*)
-! { A : x2.A .. { A : x.A .. x.A } };;
-
-(*
-   Two types declarations as bounds. The lower bound is not a sub-type of the upper
-   bound because [x.A] is not comparable with [y.A].
-*)
-{ A : { A : x.A .. x.A } .. { A : x.A .. y.A } };;
 
 (*
    Nested type declarations in nested type declarations.
