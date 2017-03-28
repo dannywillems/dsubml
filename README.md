@@ -73,7 +73,6 @@ TODO
   representation of a variable when an error occurs and is raised.
 - [x] Trick when `SEL <:` and `<: SEL` can be both used.
 - [x] Add `let x = t`.
-- [ ] check well formedness.
 - [x] Clean code.
 - [x] Define function to create nodes.
 - [x] Use defined function to create nodes in the algorithm.
@@ -92,8 +91,8 @@ TODO
 - [ ] `tuple_of_dependent_function`: call to `best_bounds` and check if it's an
   arrow. If it's `Nothing`, we need to return `Top -> Nothing` because it's the
   least upper bound which is an arrow.
-- [ ] check `best_bounds`.
-- [ ] check well formedness.
+- [ ] Prove `best_bounds` is correct.
+- [x] check well formedness.
 - [x] Clean code.
 - [x] Define function to create nodes.
 - [x] Use defined function to create nodes in the algorithm.
