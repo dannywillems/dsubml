@@ -1,0 +1,15 @@
+let x = { A = Nothing };;
+
+(* The lower bound is not a subtype of the upper bound. *)
+! { A : Any .. { A : x.A .. x.A } };;
+
+(* lower bound is a function and the upper bound a type declaration, not
+  compatible.
+*)
+! { A : x2.A .. { A : x.A .. x.A } };;
+
+(*
+   Two types declarations as bounds. The lower bound is not a sub-type of the upper
+   bound because [x.A] is not comparable with [y.A].
+*)
+{ A : { A : x.A .. x.A } .. { A : x.A .. y.A } };;

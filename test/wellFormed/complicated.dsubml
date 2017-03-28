@@ -1,0 +1,50 @@
+let x = { A = {
+    A : {
+      A : Any -> int.A .. Nothing -> Any
+    } .. {
+        A : Any -> Any .. int.A -> Any
+      }
+  }
+};;
+
+(* It's not well formed because it implies to proof
+1. Nothing -> Any  <: int.A -> Any, i.e. int.A <: Nothing
+2. Any -> Any  <: Any -> int.A, i.e. Any -> int.A
+*)
+! x.A;;
+
+(* We fix one of the two issues found below. *)
+let x = { A = {
+    A : {
+      A : Any -> int.A .. Any -> Any
+    } .. {
+        A : Any -> Any .. int.A -> Any
+      }
+  }
+};;
+
+! x.A;;
+
+(* Another way to fix it *)
+let x = { A = {
+    A : {
+      A : Any -> int.A .. Nothing -> Any
+    } .. {
+        A : Any -> Any .. Nothing -> Any
+      }
+  }
+};;
+
+! x.A;;
+
+(* We fix both. *)
+let x = { A = {
+    A : {
+      A : Any -> Any .. Any -> Any
+    } .. {
+        A : Any -> Any .. int.A -> Any
+      }
+  }
+};;
+
+x.A;;
