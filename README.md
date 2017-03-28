@@ -74,7 +74,9 @@ TODO
 - [x] Trick when `SEL <:` and `<: SEL` can be both used.
 - [x] Add `let x = t`.
 - [ ] check well formedness.
-- [ ] Clean code.
+- [x] Clean code.
+- [x] Define function to create nodes.
+- [x] Use defined function to create nodes in the algorithm.
 
 #### Not important.
 
@@ -93,6 +95,8 @@ TODO
 - [ ] check `best_bounds`.
 - [ ] check well formedness.
 - [ ] Clean code.
+- [x] Define function to create nodes.
+- [ ] Use defined function to create nodes in the algorithm.
 
 #### Not important.
 
