@@ -1,0 +1,28 @@
+(* w is of type { A : int.A -> Any .. y.A } *)
+(* let w : z.A = { A = int.A -> Any };; *)
+
+(* It is false because we need to proof Nothing -> Any <: int.A -> Any which is
+   false.
+*)
+(*
+int.A -> Any !<: w.A;;
+*)
+(* Oh, it's not well formed...
+let x = { A = {
+    A : {
+      A : Any -> int.A .. Nothing -> Any
+    } .. {
+        A : Any -> Nothing .. int.A -> Any
+      }
+  }
+};;
+
+let y : x.A = { A = { A : Any -> Nothing .. int.A -> Any } };;
+
+{ A : Any -> Any .. Nothing -> Any } <: y.A;;
+(* y.A <: { A : Any -> int.A .. Nothing -> Any };; *)
+
+let z : y.A = { A = Any -> Any };;
+
+Any -> int.A <: z.A;;
+*)
