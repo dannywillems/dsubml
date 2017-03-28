@@ -1,4 +1,4 @@
-(** Return [true] if [nominal_typ] is well formed. *)
+(* Return [true] if [nominal_typ] is well formed. *)
 let rec typ ?(use_subtyping=false) context nominal_typ = match nominal_typ with
   | Grammar.TypeTop | Grammar.TypeBottom -> true
   | Grammar.TypeDeclaration(_, s, t) ->
