@@ -1,3 +1,6 @@
+let check_well_formedness context typ =
+  if not (WellFormed.typ context typ)
+  then raise (Error.NotWellFormed(context, typ))
 
 let rec type_of_internal history context term = match term with
   (* ALL-I
@@ -5,6 +8,7 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ λ(x : S) t ⊦ ∀(x : S) U'
   *)
   | Grammar.TermAbstraction(s, (x, t)) ->
+    check_well_formedness context s;
     let context' = ContextType.add x s context in
     let u_history, u = type_of_internal history context' t in
     let typ = Grammar.TypeDependentFunction(s, (x, u)) in
@@ -36,6 +40,7 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ { A = T } : { A : T .. T }
   *)
   | Grammar.TermTypeTag(a, typ) ->
+    check_well_formedness context typ;
     let typ = Grammar.TypeDeclaration(a, typ, typ) in
     let typing_node = DerivationTree.{
         rule = "TYP-I";
@@ -163,19 +168,29 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ t : T
   *)
   | Grammar.TermAscription(t, typ_of_t) ->
-    let typing_node = DerivationTree.{
-        rule = "UN-ASC";
-        env = context;
-        term = term;
-        typ = typ_of_t;
-      }
+    check_well_formedness context typ_of_t;
+    let actual_history, actual_typ_of_t =
+      type_of_internal history context t
     in
-    let node = DerivationTree.Node(
-        typing_node,
-        history
-      )
-    in
-    node, typ_of_t
+    if Subtype.is_subtype ~context actual_typ_of_t typ_of_t
+    then (
+      let typing_node = DerivationTree.{
+          rule = "UN-ASC";
+          env = context;
+          term = term;
+          typ = typ_of_t;
+        }
+      in
+      let node = DerivationTree.Node(
+          typing_node,
+          [actual_history]
+        )
+      in
+      node, typ_of_t
+    )
+    else (
+      raise (Error.SubtypeError ("TODO", actual_typ_of_t, typ_of_t))
+    )
   (* UN-UNIMPLEMENTED
      Γ ⊦ Unimplemented : ⟂
   *)
