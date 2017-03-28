@@ -29,8 +29,7 @@ For example, you can try the subtyping algorithm on the file `test/subtype_simpl
 ./main.native -f test/subtype_simple.dsubml -a subtype
 ```
 
-A verbose mode is available for some action to see the derivation tree. Use `-v`
-to activate this mode.
+A verbose mode is available for some action to see the derivation tree. Use `--show-derivation-tree` to activate this mode.
 
 ## Syntax
 
@@ -60,7 +59,8 @@ TODO
 - [x] Add `(term : Type)` with the typing rule: `Γ ⊦ t : T => Γ ⊦ (t : T) : T`
 - [x] Add `let x = t`.
 
-- [ ] Reorganize the grammar because it's very ugly!
+- [ ] Reorganize the grammar because it's very ugly! `let x : T = t` is
+  equivalent to `let x = (t : T)`.
 
 ## Subtyping.
 
@@ -69,22 +69,36 @@ TODO
 - [x] Add an history to get the derivation tree.
 - [x] Use `SUB` in select rules.
 - [x] Add an action to check if each algorithm outputs the same result.
-- [ ] Take an extend environment (`Atom -> String`) to recover the initial
   representation of a variable when an error occurs and is raised.
 - [x] Trick when `SEL <:` and `<: SEL` can be both used.
-- [ ] Return all possible derivation trees.
 - [x] Add `let x = t`.
+- [ ] check well formedness.
+
+#### Not important.
+
+- [ ] Return all possible derivation trees.
+- [ ] Take an extend environment (`Atom -> String`) to recover the initial
 
 ## Typing.
 
 - [x] In `let x = s in t`, check that the variable doesn't appear in the type of
   `t`. This is the avoidance problem.
-- [ ] Improve error message in var application when we have `x.A` (for the moment, we only have `x.A`, not what is `x.A`). Example
-- [ ] Take an extend environment (`Atom -> String`) to recover the initial
   representation of a variable when an error occurs and is raised.
 - [x] Add `let x = t`.
+- [ ] tuple_of_dependent_function: call to `best_bounds` and check if it's an
+  arrow. If it's `Nothing`, we need to return `Top -> Nothing` because it's the
+  least upper bound which is an arrow.
+- [ ] check `best_bounds`.
+- [ ] check well formedness.
+
+#### Not important.
+
+- [ ] Improve error message in var application when we have `x.A` (for the moment, we only have `x.A`, not what is `x.A`). Example
+- [ ] Take an extend environment (`Atom -> String`) to recover the initial
 
 ## Evaluation.
+
+#### Not important.
 
 - [ ] Add a syntax to check typing at runtime like 
 ```
@@ -99,9 +113,18 @@ TODO
   Nothing .. Any }`.
 - [x] Be able to extend the environment with the syntax `let x : T = t`.
 - [x] Use a default environment (like `Pervasives` in OCaml) while reading a file.
+
+#### Not important.
+
 - [ ] Emacs mode.
 
 ## Surface language.
 
-- [x] Add a syntastic sugar for dependent function when the variable is not
+- [x] Add a sugar for dependent function when the variable is not
   needed in the return type.
+- [ ] S : Nothing .. Any (no need to mention bounds) -> S
+- [ ] S : Nothing .. U -> S <: U
+- [ ] S : L .. Any -> S :> L
+- [ ] struct .. end (ou obj .. end) to define terms and sig .. end to define types.
+- [ ] sig S = int end for { S : int .. int } (so S = int is for terms and also for types, the difference is sig .. end and struct .. end)
+
