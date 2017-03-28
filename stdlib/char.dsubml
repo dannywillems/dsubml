@@ -1,1 +1,1 @@
-let char : { A : Nothing .. Any } = Unimplemented;;
+let char : { A } = Unimplemented;;

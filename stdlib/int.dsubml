@@ -1,7 +1,7 @@
 (* This file defines integers. *)
 
 (* The int type is defined as a variable with an abstract field A. *)
-let int : { A : Nothing .. Any } = Unimplemented;;
+let int : { A } = Unimplemented;;
 
 (* Usual operators *)
 let plus : int.A -> int.A -> int.A = Unimplemented;;

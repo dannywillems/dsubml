@@ -18,6 +18,9 @@
 
 }
 
+let subtype = "<:"
+let supertype = ":>"
+
 let abstraction = "lambda"
 let forall = "forall"
 let top = "Any"
@@ -25,6 +28,11 @@ let bottom = "Nothing"
 let let_ = "let"
 let in_ = "in"
 let unimplemented_term = "Unimplemented"
+
+let sig_ = "sig"
+let struct_ = "struct"
+let obj = "obj"
+let end_ = "end"
 
 let white = [' ' '\t' '\r']
 let newline = ['\n']
@@ -43,20 +51,27 @@ rule prog = parse
     }
 
   (* Only to test subtyping algorithm. It's not in the language *)
-  | "<:" { Parser.SUBTYPE }
   | "!<:" { Parser.NOT_SUBTYPE }
   | "!" { Parser.EXCLAMATION }
   (* Syntastic sugar for functions where the variable is not present in the
      return type.
   *)
   | "->" { Parser.ARROW }
+  | subtype { Parser.SUBTYPE }
+  | supertype { Parser.SUPERTYPE }
   | unimplemented_term { Parser.UNIMPLEMENTED_TERM }
+
+  | sig_ { Parser.SIG }
+  | struct_ { Parser.STRUCT }
+  | obj { Parser.OBJ }
+  | end_ { Parser.END }
+
+  | '{' { Parser.LEFT_BRACKET }
+  | '}' { Parser.RIGHT_BRACKET }
 
   | ':' { Parser.COLON}
   | '.' { Parser.DOT }
   | '=' { Parser.EQUAL }
-  | '{' { Parser.LEFT_BRACKET }
-  | '}' { Parser.RIGHT_BRACKET }
   | '(' { Parser.LEFT_PARENT }
   | ')' { Parser.RIGHT_PARENT }
   | ';' { Parser.SEMICOLON }

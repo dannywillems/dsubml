@@ -35,19 +35,19 @@ let x = { A = Nothing };;
 
 (* Polymorphic identity *)
 (let polymorphic_identity =
-  lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
+  lambda(x : { A }) lambda(y : x.A) y
 in polymorphic_identity)
 :
-(for all(x : { A : Nothing .. Any} ) (for all(y : x.A) x.A));;
+(for all(x : { A } ) (for all(y : x.A) x.A));;
 
 (*
   With an application to { A = Nothing }. Note that to avoid the avoidance
   problem, we need to define the variable at the top level.
 *)
-let y = { A = Nothing };;
+let y = struct A = Nothing end;;
 
 (let polymorphic_identity =
-  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+  (lambda(x : sig A end) lambda(y : x.A) y)
 in
 (polymorphic_identity y))
 :
@@ -60,7 +60,7 @@ y.A -> y.A;;
 let y = { A = Any };;
 
 (let polymorphic_identity =
-  (lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y)
+  (lambda(x : { A }) lambda(y : x.A) y)
 in
 (polymorphic_identity y))
 :

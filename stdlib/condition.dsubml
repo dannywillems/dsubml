@@ -1,5 +1,5 @@
 let test :
-  for all(x : { A: Nothing .. Any })
+  for all(x : { A })
       (unit.A -> x.A) ->
       (unit.A -> x.A) ->
       x.A

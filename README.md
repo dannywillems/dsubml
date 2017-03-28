@@ -1,6 +1,45 @@
 DSubML is an implementation in OCaml of DSub.
 
-To compile, use
+## Syntax of Dsub.
+
+#### Terms
+
+- Variables : `x`, `y`, `z` (string beginning with lowercase)
+- Module containing a concrete type `{ A = int }`
+- a function : `lambda(x : T) t`
+- let binding : `let x = t in u`
+- variable application : `x y`
+  
+#### Types
+
+- forall : `forall(x : S) T`
+- module containing an abstract type with lower and upper bound `{ A : S .. T }`.
+- Top : `Any`
+- Bottom : `Nothing`
+- type projection (or a type selection in a module) : `x.A`
+
+#### Syntactic sugar.
+
+Some additional syntax is allowed to be close to OCaml syntax.
+
+- `fun(x : T) t` = `lambda(x : T) t`
+- `struct A = int end` = `{ A = int }` 
+
+- `forall(_ : S) T` = `S -> T`
+- `sig A : S .. U end` = `{ A : S .. U }` 
+- `{ A :> S }` = `{ A : S .. Any }`
+- `{ A <: T }` = `{ A : Nothing .. Any }`
+- `{ A }` = `{ A : Nothing .. Any }`
+- ``{ A = int }` = `{A : int .. int }`
+
+#### Additional
+
+- `t : T`: ascription.
+- `let x = t`: only allow at toplevel. Use to extend the environment.
+- `let x : T = t` = `let x = t : T`
+- `let x = t : T in u` = `let x : T = t in u`
+
+## How to compile.
 ```
 make
 ```
@@ -128,9 +167,9 @@ TODO
 
 - [x] Add a sugar for dependent function when the variable is not
   needed in the return type.
-- [ ] S : Nothing .. Any (no need to mention bounds) -> S
-- [ ] S : Nothing .. U -> S <: U
-- [ ] S : L .. Any -> S :> L
-- [ ] struct .. end (ou obj .. end) to define terms and sig .. end to define types.
-- [ ] sig S = int end for { S : int .. int } (so S = int is for terms and also for types, the difference is sig .. end and struct .. end)
+- [x] S : Nothing .. Any (no need to mention bounds) -> S
+- [x] S : Nothing .. U -> S <: U
+- [x] S : L .. Any -> S :> L
+- [x] struct .. end (ou obj .. end) to define terms and sig .. end to define types.
+- [x] sig S = int end for { S : int .. int } (so S = int is for terms and also for types, the difference is sig .. end and struct .. end)
 

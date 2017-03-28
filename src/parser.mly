@@ -1,23 +1,37 @@
 %token COLON
 %token DOT
+%token SEMICOLON
+
 %token LEFT_BRACKET
 %token RIGHT_BRACKET
+%token SIG
+%token STRUCT
+%token OBJ
+%token END
+
+%token SUBTYPE
+%token SUPERTYPE
+
 %token LEFT_PARENT
 %token RIGHT_PARENT
+
 %token TOP_TYPE
 %token BOTTOM_TYPE
+
 %token <string> LABEL
-%token SEMICOLON
+
 %token <string> VAR
 %token ABSTRACTION
+
 %token EQUAL
+
 %token FORALL
+
 %token LET
 %token IN
 %token EOF
 
 (* Only for testing. It's not a « real » token for the language *)
-%token SUBTYPE
 %token NOT_SUBTYPE
 %token UNIMPLEMENTED_TERM
 %token ARROW
@@ -145,12 +159,11 @@ rule_terms_not_in_dsub:
 
 rule_value:
 | LEFT_BRACKET ;
-  l = LABEL ;
-  EQUAL ;
-  typ = rule_typ ;
-  RIGHT_BRACKET {
-      Grammar.TermTypeTag(l, typ)
-    }
+  m = rule_module_struct_content
+  RIGHT_BRACKET { m }
+| STRUCT ;
+  m = rule_module_struct_content
+  END { m }
 | ABSTRACTION ;
   LEFT_PARENT ;
   id = VAR ;
@@ -161,25 +174,57 @@ rule_value:
           Grammar.TermAbstraction(typ, (id, t))
         }
 
+rule_module_struct_content:
+| l = LABEL ;
+  EQUAL ;
+  typ = rule_typ {
+            Grammar.TermTypeTag(l, typ)
+          }
+
 rule_typ:
 | TOP_TYPE { Grammar.TypeTop }
 | BOTTOM_TYPE { Grammar.TypeBottom }
 | LEFT_BRACKET ;
-  l = LABEL ;
-  COLON ;
-  s = rule_typ ;
-  DOT ;
-  DOT ;
-  t = rule_typ ;
-  RIGHT_BRACKET {
-      Grammar.TypeDeclaration(l, s, t)
-    }
+  m = rule_module_sig_content
+  RIGHT_BRACKET { m }
+| SIG ;
+  m = rule_module_sig_content
+  END { m }
+| OBJ ;
+  m = rule_module_sig_content
+  END { m }
 | x = VAR ;
   DOT ;
   l = LABEL {
           Grammar.TypeProjection(x, l)
         }
 | t = rule_typ_forall { t }
+
+rule_module_sig_content:
+| l = LABEL ;
+  COLON ;
+  s = rule_typ ;
+  DOT ;
+  DOT ;
+  t = rule_typ {
+          Grammar.TypeDeclaration(l, s, t)
+        }
+| l = LABEL ;
+  EQUAL ;
+  s = rule_typ {
+          Grammar.TypeDeclaration(l, s, s)
+        }
+| l = LABEL { Grammar.TypeDeclaration(l, Grammar.TypeBottom, Grammar.TypeTop) }
+| l = LABEL ;
+  SUPERTYPE ;
+  s = rule_typ {
+          Grammar.TypeDeclaration(l, s, Grammar.TypeTop)
+        }
+| l = LABEL ;
+  SUBTYPE ;
+  s = rule_typ {
+          Grammar.TypeDeclaration(l, Grammar.TypeBottom, s)
+        }
 
 (* Allow to add extra parentheses around for all types *)
 rule_typ_forall:
