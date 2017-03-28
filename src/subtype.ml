@@ -127,7 +127,8 @@ and subtype_internal history context s t =
      Γ ⊦ S2 <: S1 ∧ Γ ⊦ T1 <: T2 =>
      Γ ⊦ { A : S1 .. T1 } <: { A : S2 .. T2 }
   *)
-  | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2) ->
+  | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2)
+    when String.equal tag1 tag2 ->
     let left_derivation_tree, left_is_subtype =
       subtype_internal history context s2 s1
     in
@@ -136,7 +137,7 @@ and subtype_internal history context s t =
     in
     DerivationTree.create_subtyping_node
       ~rule:"TYP <: TYP"
-      ~is_true:(String.equal tag1 tag2 && left_is_subtype && right_is_subtype)
+      ~is_true:(left_is_subtype && right_is_subtype)
       ~env:context
       ~s
       ~t
@@ -253,7 +254,8 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
      Γ ⊦ S2 <: S1 ∧ Γ ⊦ T1 <: T2 =>
      Γ ⊦ { A : S1 .. T1 } <: { A : S2 .. T2 }
   *)
-  | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2) ->
+  | Grammar.TypeDeclaration(tag1, s1, t1), Grammar.TypeDeclaration(tag2, s2, t2)
+    when String.equal tag1 tag2 ->
     let left_derivation_tree, left_is_subtype =
       subtype_internal history context s2 s1
     in
@@ -262,7 +264,7 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
     in
     DerivationTree.create_subtyping_node
       ~rule:"TYP <: TYP"
-      ~is_true:(String.equal tag1 tag2 && left_is_subtype && right_is_subtype)
+      ~is_true:(left_is_subtype && right_is_subtype)
       ~env:context
       ~s
       ~t
