@@ -324,8 +324,10 @@ let check_subtype ~with_refl f =
   | Grammar.CoupleTypes(raw_s, raw_t) ->
     let nominal_s = Grammar.import_typ (!kit_import_env) raw_s in
     let nominal_t = Grammar.import_typ (!kit_import_env) raw_t in
+    (* TODO: check well formedness *)
     let history, is_subtype =
-      Subtype.subtype ~with_refl ~context:(!typing_env) nominal_s nominal_t in
+      Subtype.subtype ~with_refl ~context:(!typing_env) nominal_s nominal_t
+    in
     if !show_derivation_tree then DerivationTree.print_subtyping_derivation_tree history;
     print_is_subtype raw_s raw_t raw_is_subtype is_subtype;
     print_endline "-------------------------"
@@ -401,6 +403,7 @@ let () =
 (* ------------------------------------------------- *)
 
 let stdlib_files = [
+  "stdlib/special.dsubml";
   "stdlib/unit.dsubml";
   "stdlib/condition.dsubml";
   "stdlib/int.dsubml";
