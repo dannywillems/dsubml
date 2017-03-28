@@ -73,6 +73,7 @@ TODO
 - [x] Trick when `SEL <:` and `<: SEL` can be both used.
 - [x] Add `let x = t`.
 - [ ] check well formedness.
+- [ ] Clean code.
 
 #### Not important.
 
@@ -85,11 +86,12 @@ TODO
   `t`. This is the avoidance problem.
   representation of a variable when an error occurs and is raised.
 - [x] Add `let x = t`.
-- [ ] tuple_of_dependent_function: call to `best_bounds` and check if it's an
+- [ ] `tuple_of_dependent_function`: call to `best_bounds` and check if it's an
   arrow. If it's `Nothing`, we need to return `Top -> Nothing` because it's the
   least upper bound which is an arrow.
 - [ ] check `best_bounds`.
 - [ ] check well formedness.
+- [ ] Clean code.
 
 #### Not important.
 
