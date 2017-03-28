@@ -61,6 +61,7 @@ TODO
 
 - [ ] Reorganize the grammar because it's very ugly! `let x : T = t` is
   equivalent to `let x = (t : T)`.
+- [ ] Type label can be any string beginning with a capital letter. It implies to remove all check about labels.
 
 ## Subtyping.
 
