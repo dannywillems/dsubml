@@ -94,9 +94,9 @@ TODO
   least upper bound which is an arrow.
 - [ ] check `best_bounds`.
 - [ ] check well formedness.
-- [ ] Clean code.
+- [x] Clean code.
 - [x] Define function to create nodes.
-- [ ] Use defined function to create nodes in the algorithm.
+- [x] Use defined function to create nodes in the algorithm.
 
 #### Not important.
 
