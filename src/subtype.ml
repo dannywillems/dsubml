@@ -15,10 +15,10 @@ let string_of_rule_sel = function
 
 (* As selection rules are very close, we abstract it with this function.
 
-   [rule_sel (UN_)SEL_SUB history context (x, label) t] will apply the rule SEL <:
+   [rule_sel SEL_SUB history context (x, label) t] will apply the rule SEL <:
    for x.label <: t.
 
-   [rule_sel (UN_)SUB_SEL history context (x, label) t] will apply the rule <: SEL
+   [rule_sel SUB_SEL history context (x, label) t] will apply the rule <: SEL
    for t <: x.label.
 *)
 let rec rule_sel rule history context (x, label) t =
@@ -151,7 +151,7 @@ and subtype_internal history context s t =
      =>
      Γ ⊦ x.A <: U'.
 
-     Thanks to [TypeUtils.least_upper_bound], the actual rule is
+     With [TypeUtils.least_upper_bound], the actual rule is
      Γ ⊦ x : T ∧ Γ ⊦ T <: { A : L .. U } ∧ Γ ⊦ U <: U'
      =>
      Γ ⊦ x.A <: U'.
@@ -169,7 +169,7 @@ and subtype_internal history context s t =
      =>
      Γ ⊦ L <: x.A
 
-     Thanks to [TypeUtils.greatest_lower_bound], the actual rule is
+     With [TypeUtils.greatest_lower_bound], the actual rule is
      Γ ⊦ x : T ∧ Γ ⊦ { A : L' .. U } <: T ∧ Γ ⊦ L <: L'
      =>
      Γ ⊦ L <: x.A
@@ -205,7 +205,6 @@ and subtype_internal history context s t =
       ~s
       ~t
       ~history:[left_derivation_tree ; right_derivation_tree]
-  (* TODO: TRANS *)
   | _ ->
    DerivationTree.create_subtyping_node
      ~rule:"WRONG"
@@ -346,7 +345,6 @@ let rec subtype_with_refl_internal history context s t = match (s, t) with
       ~s
       ~t
       ~history:[left_derivation_tree ; right_derivation_tree]
-  (* TODO: TRANS *)
   | _ ->
    DerivationTree.create_subtyping_node
      ~rule:"WRONG"

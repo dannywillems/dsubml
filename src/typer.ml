@@ -1,3 +1,6 @@
+(* The main typing algorithm.
+   When a type if given if the term, we check if this type is well formed.
+*)
 let rec type_of_internal history context term = match term with
   (* ALL-I
      Γ, x : S ⊦ t : U ∧ x ∉ FV(S)
@@ -22,7 +25,7 @@ let rec type_of_internal history context term = match term with
   | Grammar.TermTypeTag(a, typ) ->
     Error.check_well_formedness context typ;
     let typ = Grammar.TypeDeclaration(a, typ, typ) in
-     DerivationTree.create_typing_node
+    DerivationTree.create_typing_node
       ~rule:"TYP-I"
       ~env:context
       ~term
@@ -66,9 +69,8 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ xy : [y := z]T
   *)
   | Grammar.TermVarApplication(x, y) ->
-    (* Hypothesis, get the corresponding types of x and y *)
-    (* We can simply use [ContextType.find x context], but it's to avoid
-       duplicating code for the history construction.
+    (* We can simply use [ContextType.find x context], but it's to get the
+       history.
     *)
     let history_x, type_of_x =
       type_of_internal history context (Grammar.TermVariable x)
@@ -79,7 +81,7 @@ let rec type_of_internal history context term = match term with
     (* Check if [x] is a dependent function. *)
     let (s, (z, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
     Error.check_type_match context (Grammar.TermVariable y) type_of_y s;
-    (* Here, we rename the variable [x1] (which is the variable in the for all
+    (* Here, we rename the variable [z] (which is the variable in the for all
        type, by the given variable [y]). We don't substitute the variable by
        the right types because it doesn't work with not well formed types (like
        x.A when x is of types Any).
