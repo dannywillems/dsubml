@@ -122,6 +122,16 @@ rule_term:
   u = rule_term {
           Grammar.TermLet(t,(x, u))
         }
+| LET ;
+  x = VAR ;
+  COLON ;
+  typ = rule_typ ;
+  EQUAL ;
+  t = rule_term ;
+  IN ;
+  u = rule_term {
+          Grammar.TermLet(Grammar.TermAscription(t, typ), (x, u))
+        }
 
 | LEFT_PARENT ;
   t = rule_term ;
