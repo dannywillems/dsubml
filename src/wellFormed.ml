@@ -1,33 +1,23 @@
 (** Return [true] if [nominal_typ] is well formed. *)
-let rec typ context nominal_typ = match nominal_typ with
+let rec typ ?(use_subtyping=false) context nominal_typ = match nominal_typ with
   | Grammar.TypeTop | Grammar.TypeBottom -> true
-  | Grammar.TypeDeclaration(_, s, t) -> (
-    try
-      let s_is_subtype_of_t =
-        Subtype.is_subtype ~context s t
-      in
-      let s_is_well_formed =
-        typ context s
-      in
-      let t_is_well_formed =
-        typ context t
-      in
-      s_is_subtype_of_t &&
-      s_is_well_formed &&
-      t_is_well_formed
-    with
-    | TypeUtils.NotATypeDeclaration _ -> false)
-  | Grammar.TypeProjection(var, typ) ->
-    let typ_of_var = ContextType.find var context in
-    let is_subtype =
-      Subtype.is_subtype
-        ~context
-        typ_of_var
-        (Grammar.TypeDeclaration("A", Grammar.TypeBottom, Grammar.TypeTop))
+  | Grammar.TypeDeclaration(_, s, t) ->
+    (if use_subtyping then Subtype.is_subtype ~context s t else true) &&
+    typ context s &&
+    typ context t
+  | Grammar.TypeProjection(x, a) ->
+    let typ_of_x = ContextType.find x context in
+    (* We can suppose x is well formed because it's checked in the case of a
+       dependent function.
+    let typ_of_x_is_well_formed =
+      typ context typ_of_x
     in
-    is_subtype
+    typ_of_x_is_well_formed &&
+    *)
+    Subtype.is_subtype
+      ~context
+      typ_of_x
+      (Grammar.TypeDeclaration(a, Grammar.TypeBottom, Grammar.TypeTop))
   | Grammar.TypeDependentFunction(s, (x, t)) ->
     let context' = ContextType.add x s context in
-    let s_is_well_formed = typ context s in
-    let t_is_well_formed = typ context' t in
-    s_is_well_formed && t_is_well_formed
+    typ context s && typ context' t
