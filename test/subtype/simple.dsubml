@@ -19,14 +19,14 @@ Any !<: Nothing;;
 (*
   It must return true. It's for testing structural equality with Grammar.equiv_typ
 *)
-for all(y : Nothing) Any <: for all(y : Nothing) Any;;
+Nothing -> Any <: Nothing -> Any;;
 
 (* Try with nested parentheses on one side and both sides. *)
-for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
+Nothing -> Any <: (Nothing -> Any);;
 
-(for all(x : Nothing) Any) <: for all(y : Nothing) Any;;
+(Nothing -> Any) <: Nothing -> Any;;
 
-(for all(x : Nothing) Any) <: (for all(y : Nothing) Any);;
+(Nothing -> Any) <: (Nothing -> Any);;
 
 (* Two for all. True. *)
 (for all(y : {A : Nothing .. Any}) y.A) <: (for all(y : {A : Nothing .. Any}) y.A);;
@@ -48,4 +48,4 @@ for all(y : Nothing) Any <: (for all(y : Nothing) Any);;
 { A : {B : Nothing .. Any} .. Any } <: { A : Nothing .. Any };;
 (* ---------------------------------------- *)
 
-(for all(x : Nothing) (for all(y : Nothing) Any)) !<: (for all(y : {A : Nothing .. Nothing}) y.A);;
+(Nothing -> Nothing -> Any) !<: (for all(y : {A : Nothing .. Nothing}) y.A);;
