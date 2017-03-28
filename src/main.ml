@@ -193,7 +193,7 @@ let read_top_level_let x raw_t raw_typ =
   )
   else
     raise (
-      Error.SubtypeError (
+      Error.Subtype (
         (Printf.sprintf
            "%s is not a subtype of %s"
            (Print.string_of_nominal_typ type_of_t)
@@ -214,7 +214,7 @@ let rec execute action lexbuf =
   | Parser.Error ->
     print_error lexbuf;
     exit 1
-  | Error.SubtypeError(_) | Error.AvoidanceProblem(_) as e ->
+  | Error.Subtype(_) | Error.AvoidanceProblem(_) as e ->
     Error.print e;
     execute action lexbuf
 
