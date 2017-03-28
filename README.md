@@ -167,9 +167,10 @@ TODO
 
 - [x] Add a sugar for dependent function when the variable is not
   needed in the return type.
-- [x] S : Nothing .. Any (no need to mention bounds) -> S
-- [x] S : Nothing .. U -> S <: U
-- [x] S : L .. Any -> S :> L
-- [x] struct .. end (ou obj .. end) to define terms and sig .. end to define types.
-- [x] sig S = int end for { S : int .. int } (so S = int is for terms and also for types, the difference is sig .. end and struct .. end)
+- [x] `S : Nothing .. Any` (no need to mention bounds) -> `S`
+- [x] `S : Nothing .. U` -> `S <: U`
+- [x] `S : L .. Any` -> `S :> L`
+- [x] `struct .. end` and `obj .. end`) to define module structure and
+- [x] `sig .. end` to define module type.
+- [x] `{ S : int .. int }` -> `{ S = int }`
 
