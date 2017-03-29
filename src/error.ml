@@ -6,6 +6,8 @@ exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 
 exception NotWellFormed of ContextType.context * Grammar.nominal_typ
 
+exception NotADependentFunction of Grammar.nominal_typ
+
 let check_well_formedness context typ =
   if not (WellFormed.typ context typ)
   then raise (NotWellFormed(context, typ))

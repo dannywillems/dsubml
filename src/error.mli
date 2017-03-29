@@ -21,6 +21,8 @@ exception TypeMismatch of string * (Grammar.nominal_typ * Grammar.nominal_typ)
 
 exception NotWellFormed of ContextType.context * Grammar.nominal_typ
 
+exception NotADependentFunction of Grammar.nominal_typ
+
 val check_well_formedness :
   ContextType.context ->
   Grammar.nominal_typ ->
