@@ -49,9 +49,10 @@ val greatest_lower_bound :
     If it's not a dependent function, an exception [NotADependentFunction] is
     raised with [typ] as parameter.
 *)
-val tuple_of_dependent_function :
+val best_tuple_of_dependent_function :
+  ContextType.context ->
   Grammar.nominal_typ ->
-  (Grammar.nominal_typ * (AlphaLib.Atom.atom * Grammar.nominal_typ))
+  (Grammar.nominal_typ * (AlphaLib.Atom.atom * Grammar.nominal_typ)) option
 
 (** [is_value term] returns [true] if [term] is a value (a lambda abstraction or
     a type tag).

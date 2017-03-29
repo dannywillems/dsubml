@@ -79,20 +79,26 @@ let rec type_of_internal history context term = match term with
       type_of_internal history context (Grammar.TermVariable y)
     in
     (* Check if [x] is a dependent function. *)
-    let (s, (z, t)) = TypeUtils.tuple_of_dependent_function type_of_x in
-    Error.check_type_match context (Grammar.TermVariable y) type_of_y s;
-    (* Here, we rename the variable [z] (which is the variable in the for all
-       type, by the given variable [y]). We don't substitute the variable by
-       the right types because it doesn't work with not well formed types (like
-       x.A when x is of types Any).
-    *)
-    let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton z y) t in
-    DerivationTree.create_typing_node
-      ~rule:"ALL-E"
-      ~env:context
-      ~term
-      ~typ
-      ~history:[history_x ; history_y]
+    let dep_function_opt =
+      TypeUtils.best_tuple_of_dependent_function context type_of_x
+    in
+    (match dep_function_opt with
+    | Some (s, (z, t)) ->
+      Error.check_type_match context (Grammar.TermVariable y) type_of_y s;
+      (* Here, we rename the variable [z] (which is the variable in the for all
+         type, by the given variable [y]). We don't substitute the variable by
+         the right types because it doesn't work with not well formed types (like
+         x.A when x is of types Any).
+      *)
+      let typ = Grammar.rename_typ (AlphaLib.Atom.Map.singleton z y) t in
+      DerivationTree.create_typing_node
+        ~rule:"ALL-E"
+        ~env:context
+        ~term
+        ~typ
+        ~history:[history_x ; history_y]
+    | None -> raise (Error.NotADependentFunction(type_of_x))
+    )
   (* ----- Unofficial typing rules ----- *)
   (* UN-ASC
      Γ ⊦ t : T
