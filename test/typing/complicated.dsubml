@@ -1,11 +1,25 @@
 (* We define a module with a nested module. *)
-let x = { A = { A : int.A -> string.A .. Any } };;
+let x = struct
+  A = sig A :> int.A -> string.A end
+end;;
 
 (* Trying to apply to a function a module which is a subtype of the argument.
    y <: x.A
-*)
 let f = lambda (z : x.A) z;;
 
-let y = { A = int.A -> string.A } in
+let y = struct A = int.A -> string.A end in
 let f = lambda (z : x.A) z in
 f y;;
+
+let x = struct
+  A = sig A :> sig A = int.A -> int.A end end
+end;;
+
+let y : x.A = struct A = sig A = int.A -> int.A end end;;
+
+let z : y.A = struct A = int.A -> int.A end;;
+
+let f : z.A = succ;;
+
+f zero;;
+*)
