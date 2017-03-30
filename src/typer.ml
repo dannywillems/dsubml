@@ -8,8 +8,8 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ λ(x : S) t ⊦ ∀(x : S) U
   *)
   | Grammar.TermAbstraction(s, (x, t)) ->
-    Error.check_well_formedness context s;
-    Error.check_avoidance_problem x s;
+    CheckUtils.check_well_formedness context s;
+    CheckUtils.check_avoidance_problem x s;
     let context' = ContextType.add x s context in
     let u_history, u = type_of_internal history context' t in
     let typ = Grammar.TypeDependentFunction(s, (x, u)) in
@@ -23,7 +23,7 @@ let rec type_of_internal history context term = match term with
      Γ ⊦ { A = T } : { A : T .. T }
   *)
   | Grammar.TermTypeTag(a, typ) ->
-    Error.check_well_formedness context typ;
+    CheckUtils.check_well_formedness context typ;
     let typ = Grammar.TypeDeclaration(a, typ, typ) in
     DerivationTree.create_typing_node
       ~rule:"TYP-I"
@@ -44,7 +44,7 @@ let rec type_of_internal history context term = match term with
     let x_typ = t_typ in
     let context' = ContextType.add x x_typ context in
     let right_history, u_typ = type_of_internal history context' u in
-    Error.check_avoidance_problem x u_typ;
+    CheckUtils.check_avoidance_problem x u_typ;
     DerivationTree.create_typing_node
       ~rule:"LET"
       ~env:context
@@ -84,7 +84,7 @@ let rec type_of_internal history context term = match term with
     in
     (match dep_function_opt with
     | Some (s, (z, t)) ->
-      Error.check_type_match context (Grammar.TermVariable y) type_of_y s;
+      CheckUtils.check_type_match context (Grammar.TermVariable y) type_of_y s;
       (* Here, we rename the variable [z] (which is the variable in the for all
          type, by the given variable [y]). We don't substitute the variable by
          the right types because it doesn't work with not well formed types (like
@@ -107,8 +107,8 @@ let rec type_of_internal history context term = match term with
     let actual_history, actual_typ_of_t =
       type_of_internal history context t
     in
-    Error.check_well_formedness context typ_of_t;
-    Error.check_subtype context actual_typ_of_t typ_of_t;
+    CheckUtils.check_well_formedness context typ_of_t;
+    CheckUtils.check_subtype context actual_typ_of_t typ_of_t;
     DerivationTree.create_typing_node
       ~rule:"UN-ASC"
       ~env:context
