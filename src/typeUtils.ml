@@ -6,15 +6,14 @@ type direction =
   | Upper
   | Lower
 
-(* Need to find an invariant. We suppose the [t] is well formed. *)
 let rec best_bound_for_type_declaration ~direction ~label context t = match t with
-  (* The best least upper bound is the type declaration { A : Bottom .. Bottom }.
+  (* The least upper bound is the type declaration { A : Bottom .. Bottom }.
   And there is no greatest lower bound in the form { A : L .. U } *)
   | Grammar.TypeBottom ->
     (match direction with
     | Upper -> Some Grammar.TypeBottom
     | Lower -> None)
-  (* The best greatest lower bound is the type declaration { A : Top .. Top }.
+  (* The greatest lower bound is the type declaration { A : Top .. Top }.
   And there is no least upper bound in the form { A : L .. U } *)
   | Grammar.TypeTop ->
     (match direction with
@@ -49,46 +48,40 @@ let rec best_bound_for_type_declaration ~direction ~label context t = match t wi
     | None -> None
     )
 
-let least_upper_bound ~label context t =
+let least_upper_bound_of_type_declaration ~label context t =
   best_bound_for_type_declaration ~direction:Upper ~label context t
 
-let greatest_lower_bound ~label context t =
+let greatest_lower_bound_of_type_declaration ~label context t =
   best_bound_for_type_declaration ~direction:Lower ~label context t
 
-(** [best_tuple_of_dependent_function ctx L] renvoie le plus petit U de la forme
-    ∀(x : S) T tel que L <: U
-*)
-let rec best_tuple_of_dependent_function context t = match t with
+let rec least_upper_bound_of_dependent_function context t = match t with
   | Grammar.TypeDependentFunction(s, (x, t)) ->
     Some (s, (x, t))
-  | Grammar.TypeBottom -> Some (Grammar.TypeTop, ((AlphaLib.Atom.fresh "_"), Grammar.TypeBottom))
+  | Grammar.TypeBottom ->
+    Some (
+      Grammar.TypeTop,
+      ((AlphaLib.Atom.fresh "_"), Grammar.TypeBottom)
+    )
   | Grammar.TypeTop -> None
   | Grammar.TypeDeclaration(_) -> None
   (* Si on a L = x.A, on a x de la forme { A : L .. U }. On fait alors appel à
      least_upper_bound pour récupérer le plus petit U tel que L <: U et on
-     applique de nouveau best_tuple_of_dependent_function sur U pour récupérer le
-     plus U' tel que U' est de la forme ∀(x : S) T.
+     applique de nouveau best_tuple_of_dependent_function sur U pour récupérer
+     le plus U' tel que U' est de la forme ∀(x : S) T.
   *)
   | Grammar.TypeProjection(x, label) ->
-    let least_upper_bound = least_upper_bound ~label context t in
+    let least_upper_bound =
+      least_upper_bound_of_type_declaration ~label context t
+    in
     (match least_upper_bound with
     | None -> None
-    | Some u -> best_tuple_of_dependent_function context u
+    | Some u -> least_upper_bound_of_dependent_function context u
     )
-
 
 let is_value t = match t with
   | Grammar.TermTypeTag (_) | Grammar.TermAbstraction (_) -> true
   | _ -> false
 
-(* Not sure it's OK and useful. See branch [is_type_declaration]
-let rec is_type_declaration context typ = match typ with
-  | Grammar.TypeDeclaration _ -> true
-  | Grammar.TypeProjection (var, tag) ->
-    let type_of_var = ContextType.find var context in
-    is_type_declaration context type_of_var
-  | _ -> false
-*)
 let as_value t =
   if is_value t
   then t

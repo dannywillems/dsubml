@@ -80,7 +80,7 @@ let rec type_of_internal history context term = match term with
     in
     (* Check if [x] is a dependent function. *)
     let dep_function_opt =
-      TypeUtils.best_tuple_of_dependent_function context type_of_x
+      TypeUtils.least_upper_bound_of_dependent_function context type_of_x
     in
     (match dep_function_opt with
     | Some (s, (z, t)) ->

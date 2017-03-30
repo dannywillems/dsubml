@@ -30,8 +30,16 @@ let rec rule_sel rule history context (x, label) t =
   in
   let s =
     match rule with
-    | SEL_SUB -> TypeUtils.least_upper_bound ~label context type_of_x
-    | SUB_SEL -> TypeUtils.greatest_lower_bound ~label context type_of_x
+    | SEL_SUB ->
+      TypeUtils.least_upper_bound_of_type_declaration
+        ~label
+        context
+        type_of_x
+    | SUB_SEL ->
+      TypeUtils.greatest_lower_bound_of_type_declaration
+        ~label
+        context
+        type_of_x
   in
   match s with
   | Some s ->

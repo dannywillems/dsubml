@@ -3,53 +3,40 @@ exception NotATypeDeclaration of Grammar.nominal_typ
 exception NotADependentFunction of Grammar.nominal_typ
 exception NotAValue of Grammar.nominal_term
 
-type direction =
-  | Upper
-  | Lower
+(** [least_upper_bound_of_type_declaration ~label context typ] returns the least upper bound
+    (as an option) appearing in a type declaration
+    for the given type [typ]. If no such type exists, it returns [None].
 
-(** [best_bound_for_type_declaration ~direction ~label context typ] returns the
-    best bound (as an option) appearing in a type declaration (best = least
-    upper if [direction] = [Upper] and greatest lower if [direction] = [Lower])
-    for the given type [typ]. If no such type exist, [None] is return.
-
-    In other words, in the case of [direction] = [Upper], this algorithm returns
-    the least U such as [typ] < { A : L .. U }. In the case of [direction] =
-    [Lower], it returns the greatest L such as { A : L .. U } <: [typ].
+    In other words, this algorithm returns
+    the least U such as [typ] <: { A : L .. U }.
 
     The parameter [~label] is to check the type label.
 *)
-val best_bound_for_type_declaration :
-  direction:direction ->
+val least_upper_bound_of_type_declaration :
   label:Grammar.type_tag ->
   ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ option
 
-(** [least_upper_bound ~label context typ] is an alias to [best_bound
-    ~direction:Upper ~label context typ].
+(** [greatest_lower_bound_of_type_declaration ~label context typ] returns the greatest lower bound
+    (as an option) appearing in a type declaration for the given type [typ]. If
+    no such type exists, it returns [None].
+
+    In other words, this algorithm returns
+    the greatest L such as { A : L .. U } <: [typ].
+
+    The parameter [~label] is to check the type label.
 *)
-val least_upper_bound :
+val greatest_lower_bound_of_type_declaration :
   label:Grammar.type_tag ->
   ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ option
 
-(** [greatest_lower_bound ~label context typ] is an alias to [best_bound
-    ~direction:Lower ~label context typ].
+(** [least_upper_bound_of_dependent_function ctx L] returns the least upper
+    bound of L which has the form ∀(x : S) T.
 *)
-val greatest_lower_bound :
-  label:Grammar.type_tag ->
-  ContextType.context ->
-  Grammar.nominal_typ ->
-  Grammar.nominal_typ option
-
-(** [tuple_of_dependent_function typ] returns the tuple (s, (x, t)) if the
-    given type [typ] is a dependent function (TypeDependentFunction) where [s]
-    is the type of the parameter [x] and [t] the return type.
-    If it's not a dependent function, an exception [NotADependentFunction] is
-    raised with [typ] as parameter.
-*)
-val best_tuple_of_dependent_function :
+val least_upper_bound_of_dependent_function :
   ContextType.context ->
   Grammar.nominal_typ ->
   (Grammar.nominal_typ * (AlphaLib.Atom.atom * Grammar.nominal_typ)) option
