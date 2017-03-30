@@ -10,7 +10,7 @@
     The parameter [~label] is to check the type label.
 *)
 val least_upper_bound_of_type_declaration :
-  label:Grammar.type_tag ->
+  label:Grammar.type_label ->
   ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ option
@@ -25,7 +25,7 @@ val least_upper_bound_of_type_declaration :
     The parameter [~label] is to check the type label.
 *)
 val greatest_lower_bound_of_type_declaration :
-  label:Grammar.type_tag ->
+  label:Grammar.type_label ->
   ContextType.context ->
   Grammar.nominal_typ ->
   Grammar.nominal_typ option

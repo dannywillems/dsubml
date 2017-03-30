@@ -1,13 +1,13 @@
 open AlphaLib
 open BindingForms
 
-type type_tag = string[@opaque]
+type type_label = string[@opaque]
 
 and ('bn, 'fn) term =
   (* x *)
   | TermVariable of 'fn
   (* { A = T } *)
-  | TermTypeTag of type_tag * ('bn, 'fn) typ
+  | TermTypeTag of type_label * ('bn, 'fn) typ
   (* λ(x : S) t --> (S, (x, t)) *)
   | TermAbstraction of
       ('bn, 'fn) typ * ('bn, ('bn, 'fn) term) abs
@@ -29,9 +29,9 @@ and ('bn, 'fn) typ =
   (* Bottom type : ⟂ *)
   | TypeBottom
   (* { L : S..T } --> (L, S, T) *)
-  | TypeDeclaration of type_tag * ('bn, 'fn) typ * ('bn, 'fn) typ
+  | TypeDeclaration of type_label * ('bn, 'fn) typ * ('bn, 'fn) typ
   (* x.L *)
-  | TypeProjection of 'fn * type_tag
+  | TypeProjection of 'fn * type_label
   (* ∀(x : S) T --> (S, (x, T)) *)
   | TypeDependentFunction of
       ('bn, 'fn) typ *
