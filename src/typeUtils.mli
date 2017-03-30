@@ -1,7 +1,4 @@
 (** Utilities about types and terms. *)
-exception NotATypeDeclaration of Grammar.nominal_typ
-exception NotADependentFunction of Grammar.nominal_typ
-exception NotAValue of Grammar.nominal_term
 
 (** [least_upper_bound_of_type_declaration ~label context typ] returns the least upper bound
     (as an option) appearing in a type declaration
@@ -47,23 +44,3 @@ val least_upper_bound_of_dependent_function :
 val is_value :
   Grammar.nominal_term ->
   bool
-
-(* Not sure it's OK and useful. See branch [is_type_declaration]
-(** [is_type_declaration context typ] returns [true] if [typ] is a type
-    declaration (i.e. a module). It also considers the nested type declarations
-    i.e. when the variable [x] in a type projection [x.A] is an alias of [y.A]
-    in the context [context] where [y] is a type declaration.
-*)
-val is_type_declaration :
-  ContextType.context ->
-  Grammar.nominal_typ ->
-  bool
-*)
-
-(** [as_value term] returns [term] if it's a value, else raise an exception
-    [NotAValue].
-*)
-val as_value :
-  Grammar.nominal_term ->
-  Grammar.nominal_term
-

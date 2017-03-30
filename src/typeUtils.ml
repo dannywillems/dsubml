@@ -1,7 +1,3 @@
-exception NotATypeDeclaration of Grammar.nominal_typ
-exception NotADependentFunction of Grammar.nominal_typ
-exception NotAValue of Grammar.nominal_term
-
 type direction =
   | Upper
   | Lower
@@ -81,9 +77,3 @@ let rec least_upper_bound_of_dependent_function context t = match t with
 let is_value t = match t with
   | Grammar.TermTypeTag (_) | Grammar.TermAbstraction (_) -> true
   | _ -> false
-
-let as_value t =
-  if is_value t
-  then t
-  else raise (NotAValue t)
-
