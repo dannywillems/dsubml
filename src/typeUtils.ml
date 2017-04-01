@@ -40,6 +40,9 @@ let rec best_bound_for_type_declaration ~direction ~label context t = match t wi
         type_of_x
     in
     (match u' with
+     (* I failed in proving it's the best bound but it's at least a
+        candidate.
+     *)
     | Some u' -> best_bound_for_type_declaration ~direction ~label context u'
     | None -> None
     )
@@ -60,14 +63,15 @@ let rec least_upper_bound_of_dependent_function context t = match t with
     )
   | Grammar.TypeTop -> None
   | Grammar.TypeDeclaration(_) -> None
-  (* Si on a L = x.A, on a x de la forme { A : L .. U }. On fait alors appel à
-     least_upper_bound pour récupérer le plus petit U tel que L <: U et on
-     applique de nouveau best_tuple_of_dependent_function sur U pour récupérer
-     le plus U' tel que U' est de la forme ∀(x : S) T.
-  *)
   | Grammar.TypeProjection(x, label) ->
+    (* Si on a T = x.A, on a x de la forme { A : L .. U }. On fait alors appel à
+       least_upper_bound pour récupérer le plus petit U tel que T <: U et on
+       applique de nouveau least_upper_bound_of_dependent_function sur U pour
+       récupérer le plus U' tel que U' est de la forme ∀(x : S') T'.
+    *)
+    let type_of_x = ContextType.find x context in
     let least_upper_bound =
-      least_upper_bound_of_type_declaration ~label context t
+      least_upper_bound_of_type_declaration ~label context type_of_x
     in
     (match least_upper_bound with
     | None -> None
