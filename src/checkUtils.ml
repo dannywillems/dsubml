@@ -1,6 +1,18 @@
 let check_well_formedness context typ =
   if not (WellFormed.typ context typ)
-  then raise (Error.NotWellFormed(context, typ))
+  then
+    let str =
+      Printf.sprintf
+        "%s is not well formed."
+        (Print.string_of_nominal_typ typ)
+    in
+    raise (
+      Error.NotWellFormed(
+        str,
+        context,
+        typ
+      )
+    )
 
 let check_avoidance_problem x s =
   if Grammar.occurs_typ x s
