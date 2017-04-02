@@ -51,7 +51,7 @@ end;;
 
 let f = lambda (z : x.A) z;;
 
-(* Trying to apply to a function a module which is a subtype of the argument. *)
+(* Try to apply to a function a module which is a subtype of the argument. *)
 let y = struct A = int.A -> string.A end;;
 f y;;
 
