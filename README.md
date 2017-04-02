@@ -9,7 +9,7 @@ DSubML is an implementation in OCaml of DSub, a ML like language with path depen
 - a function : `lambda(x : T) t`
 - let binding : `let x = t in u`
 - variable application : `x y`
-  
+
 #### Types
 
 - forall : `forall(x : S) T`
@@ -23,12 +23,12 @@ DSubML is an implementation in OCaml of DSub, a ML like language with path depen
 Some additional syntax is allowed to be close to OCaml syntax.
 
 - `fun(x : T) t` = `lambda(x : T) t`
-- `struct A = int end` = `{ A = int }` 
+- `struct A = int end` = `{ A = int }`
 
 - `forall(_ : S) T` = `S -> T`
-- `sig A : S .. U end` = `{ A : S .. U }` 
+- `sig A : S .. U end` = `{ A : S .. U }`
 - `{ A :> S }` = `{ A : S .. Any }`
-- `{ A <: T }` = `{ A : Nothing .. Any }`
+- `{ A <: T }` = `{ A : Nothing .. T }`
 - `{ A }` = `{ A : Nothing .. Any }`
 - ``{ A = int }` = `{A : int .. int }`
 
