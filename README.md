@@ -39,6 +39,52 @@ Some additional syntax is allowed to be close to OCaml syntax.
 - `let x : T = t` = `let x = t : T`
 - `let x = t : T in u` = `let x : T = t in u`
 
+## Examples
+
+```OCaml
+(* We define a module with a type which is a module type with a type between
+   int.A -> string.A and Any (Top)
+*)
+let x = struct
+  A = sig A :> int.A -> string.A end
+end;;
+
+let f = lambda (z : x.A) z;;
+
+(* Trying to apply to a function a module which is a subtype of the argument. *)
+let y = struct A = int.A -> string.A end;;
+f y;;
+
+(* Must fail because g is of type Any because (f y) is between int.A -> string.A
+   and Any and the upper bound is selected.
+   NOTE: zero is a predefined value of type int.A.
+*)
+let g = f y;;
+g zero;;
+
+(* Try with a supertype of the lower bound of the argument. *)
+let y = struct A = int.A -> Any end;;
+f y;;
+
+(* Must fail because g is of type Any because (f y) is between int.A -> Any
+   and Any and the upper bound is selected.
+*)
+let g = f y;;
+g zero;;
+
+let x = struct
+  A = sig A = sig A = int.A -> int.A end end
+end;;
+
+let y : x.A = struct A = sig A = int.A -> int.A end end;;
+
+let z : y.A = struct A = int.A -> int.A end;;
+
+let f : z.A = succ;;
+
+f zero;;
+```
+
 ## How to compile.
 ```
 make
