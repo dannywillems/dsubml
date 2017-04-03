@@ -1,3 +1,4 @@
+(** NOT USED *)
 (*
   The store contains a list a couple (x, v) where x is a term variable and v is
   a value stored in the variable x.
