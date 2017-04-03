@@ -1,5 +1,5 @@
 (* The type unit *)
-let unit : { A } = Unimplemented;;
+let unit : sig type A end = Unimplemented;;
 
 (* The value unit *)
 let v_unit : unit.A = Unimplemented;;

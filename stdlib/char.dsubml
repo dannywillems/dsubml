@@ -1,1 +1,1 @@
-let char : { A } = Unimplemented;;
+let char : sig type A end = Unimplemented;;

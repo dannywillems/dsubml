@@ -17,12 +17,12 @@ let x = { A = {
   }
 };;
 
-let y : x.A = { A = { A : Any -> Nothing .. int.A -> Any } };;
+let y : x.A = { type A = { type A : Any -> Nothing .. int.A -> Any } };;
 
-{ A : Any -> Any .. Nothing -> Any } <: y.A;;
-(* y.A <: { A : Any -> int.A .. Nothing -> Any };; *)
+{ type A : Any -> Any .. Nothing -> Any } <: y.A;;
+(* y.A <: { type A : Any -> int.A .. Nothing -> Any };; *)
 
-let z : y.A = { A = Any -> Any };;
+let z : y.A = { type A = Any -> Any };;
 
 Any -> int.A <: z.A;;
 *)
