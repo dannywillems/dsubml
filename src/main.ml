@@ -8,8 +8,6 @@ type action =
   | Check_typing
   | Eval
   | WellFormed
-  | Read_term
-  | Read_type
   | Subtype
   | Subtype_same_output
   | Subtype_with_REFL
@@ -17,8 +15,6 @@ type action =
 
 let action_of_string = function
   | "check_typing" -> Check_typing
-  | "read_term" -> Read_term
-  | "read_type" -> Read_type
   | "eval" -> Eval
   | "subtype" -> Subtype
   | "subtype_with_REFL" -> Subtype_with_REFL
@@ -273,38 +269,12 @@ let check_subtype ~with_refl f =
     print_endline "-------------------------"
   | Grammar.TopLevelLetSubtype (var, raw_term) ->
     read_top_level_let var raw_term
-
-(** Action to read a file with list of terms. *)
-let read_term_file f =
-  match Parser.top_level Lexer.prog f with
-  | Grammar.Term raw_term ->
-    let nominal_term = Grammar.import_term (!kit_import_env) raw_term in
-    print_endline "Raw term";
-    Print.Style.raw_term [ANSITerminal.cyan] raw_term;
-    print_endline "\nPrint nominal_term";
-    Print.Style.nominal_term [ANSITerminal.blue] nominal_term;
-    print_endline "\n-------------------------"
-  | Grammar.TopLevelLetTerm (var, raw_term) ->
-    read_top_level_let var raw_term
-
-
-(** Action to read a file with list of types. *)
-let read_type_file f =
-  let raw_typ = Parser.top_level_type Lexer.prog f in
-  let nominal_typ = Grammar.import_typ (!kit_import_env) raw_typ in
-  print_endline "Raw typ";
-  Print.Style.raw_typ [ANSITerminal.cyan] raw_typ;
-  print_endline "\nPrint nominal_typ";
-  Print.Style.nominal_typ [ANSITerminal.blue] nominal_typ;
-  print_endline "\n-------------------------"
 (* ------------------------------------------------- *)
 
 (* ------------------------------------------------- *)
 (* Args stuff *)
 let actions = [
   "check_typing";
-  "read_term";
-  "read_type";
   "subtype";
   "subtype_same_output";
   "subtype_with_REFL";
@@ -374,8 +344,6 @@ let () =
   match (action_of_string (!eval_opt)) with
   | Check_typing -> execute check_typing lexbuf
   | WellFormed -> execute well_formed lexbuf
-  | Read_term -> execute read_term_file lexbuf
-  | Read_type -> execute read_type_file lexbuf
   | Eval -> execute eval lexbuf
   | Subtype -> execute (check_subtype ~with_refl:false) lexbuf
   | Subtype_same_output -> execute check_subtype_algorithms lexbuf
