@@ -1,5 +1,5 @@
 let test :
-  for all(x : { A })
+  for all(x : sig type A end)
       (unit.A -> x.A) ->
       (unit.A -> x.A) ->
       x.A

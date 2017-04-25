@@ -19,9 +19,9 @@ let x =
   z) { A = int.A }.
 *)
 
-let y : x.A = struct A = int.A end;;
+let y : x.A = struct type A = int.A end;;
 
-let y' = struct A = int.A end;;
+let y' = struct type A = int.A end;;
 (* Even if y = { A = int.A }, as we promote the variable y to the type x.A which
    is of type { A : int.A .. Any } .. { A : int.A .. Any }, y.A is not a
    sub-type of int.A.
@@ -56,7 +56,7 @@ let x =
   end;;
 
 (* We create a new module of type x.A (which is a module containing a module.) *)
-let y : x.A = struct A = sig A = int.A end end;;
+let y : x.A = struct type A = sig A = type int.A end end;;
 
 (* Returns true because y is a module which the type is between { A : int.A ..
    int.A } and { A : int.A .. Any }.
@@ -64,16 +64,16 @@ let y : x.A = struct A = sig A = int.A end end;;
 y.A <: sig A :> int.A end;;
 
 (* Returns false because the upper bound of y.A is { A : int.A .. Any } *)
-y.A !<: sig A = int.A end;;
+y.A !<: sig type A = int.A end;;
 
 (* Returns true because it's the lower bound of y.A *)
-sig A = int.A end<: y.A;;
+sig type A = int.A end <: y.A;;
 
 (* Returns false because it's the upper bound of y.A *)
-sig A :> int.A end !<: y.A;;
+sig type A :> int.A end !<: y.A;;
 
 (* A new module of the type of the nested module in y *)
-let z : y.A = struct A = int.A end;;
+let z : y.A = struct type A = int.A end;;
 
 (* Upper bound of z.A is Any. *)
 z.A !<: int.A;;
@@ -82,37 +82,37 @@ z.A !<: int.A;;
 int.A <: z.A;;
 
 let x =
-  struct A = sig A :> int.A -> unit.A end end;;
+  struct type A = sig type A :> int.A -> unit.A end end;;
 
 (* It must return false because type declaration is contravariant wrt lower
    bound. The lower bounds are functions, and functions are contravariant wrt the
    type of the argument. It implies to prove Nothing -> Any <: int.A -> unit.A, but
    it implies to proof int.A <: Nothing, which is false;
 *)
-x.A !<: sig A :> Nothing -> Any end;;
+x.A !<: sig type A :> Nothing -> Any end;;
 
-x.A !<: sig A :> Any -> Any end;;
+x.A !<: sig type A :> Any -> Any end;;
 
 (* Examples with a type between the lower bound and the upper bound*)
 let x =
   struct
-    A = sig A : Any -> Any .. Nothing -> Any end
+    A = sig type A : Any -> Any .. Nothing -> Any end
   end
 ;;
 
-let y : x.A = struct A = int.A -> Any end;;
+let y : x.A = struct type A = int.A -> Any end;;
 
-y.A !<: sig A :> int.A -> Any end;;
+y.A !<: sig type A :> int.A -> Any end;;
 
 y.A <: Nothing -> Any;;
 
-sig A :> int.A -> Any end !<: y.A;;
+sig type A :> int.A -> Any end !<: y.A;;
 
 (* *)
 let z = struct
-  A = sig A : int.A -> Any .. y.A end
+  A = sig type A : int.A -> Any .. y.A end
 end;;
 
-z.A !<: sig A :> Nothing -> Any end;;
+z.A !<: sig type A :> Nothing -> Any end;;
 
 int.A -> Any !<: y.A;;

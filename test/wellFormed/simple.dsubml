@@ -1,7 +1,7 @@
 (* -------------------------------------------------- *)
 (* ----- Type projection ----- *)
 (* Module with a type A equal to Nothing. *)
-let x = { A = Nothing };;
+let x = struct type A = Nothing end;;
 x.A;;
 
 (* The special case Nothing. *)
@@ -31,32 +31,32 @@ x.A -> y.A;;
 (* -------------------------------------------------- *)
 (* ----- Type declarations ----- *)
 (* The bounds are well formed. *)
-{ A : x.A .. x.A };;
+{ type A : x.A .. x.A };;
 
 (* The lower bound is not well formed. *)
-! { A : z.A .. x.A };;
+! { type A : z.A .. x.A };;
 
 (* not well formed bounds. *)
-! { A : z.A .. z.A };;
+! { type A : z.A .. z.A };;
 
 (* Try to get the type tag A on a function *)
 let x2 = lambda(a : x.A) a;;
 ! x2.A;;
 
 (* A bound is not a well formed type function. *)
-! { A : x2.A .. z.A };;
+! { type A : x2.A .. z.A };;
 (* -------------------------------------------------- *)
 
 (* -------------------------------------------------- *)
 (* ----- Type declaration in type declaration ----- *)
 (* Well typed upper bound. *)
-{ A : Nothing .. { A : x.A .. x.A } };;
+{ type A : Nothing .. { type A : x.A .. x.A } };;
 
 (*
    Nested type declarations in nested type declarations.
 *)
-{ A : { A : { A : x.A .. x.A } .. Any } .. Any };;
+{ type A : { type A : { type A : x.A .. x.A } .. Any } .. Any };;
 
-let z : { A : Nothing .. Any } = Unimplemented;;
+let z : { type A : Nothing .. Any } = Unimplemented;;
 let x : z.A = Unimplemented;;
 ! x.A;;

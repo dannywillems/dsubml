@@ -14,7 +14,7 @@ let x = lambda(x : Nothing) x in x;;
 
 (* Polymorphic identity *)
 let polymorphic_identity =
-  lambda(x : { A : Nothing .. Any }) lambda(y : x.A) y
+  lambda(x : sig type A : Nothing .. Any end) lambda(y : x.A) y
 in polymorphic_identity;;
 
 (*

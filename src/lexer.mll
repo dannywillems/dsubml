@@ -65,6 +65,7 @@ rule prog = parse
   | struct_ { Parser.STRUCT }
   | obj { Parser.OBJ }
   | end_ { Parser.END }
+  | "type" { Parser.TYPE }
 
   | '{' { Parser.LEFT_BRACKET }
   | '}' { Parser.RIGHT_BRACKET }

@@ -1,8 +1,8 @@
-let x = { A = {
-    A : {
-      A : Any -> int.A .. Nothing -> Any
+let x = { type A = {
+    type A : {
+      type A : Any -> int.A .. Nothing -> Any
     } .. {
-        A : Any -> Any .. int.A -> Any
+        type A : Any -> Any .. int.A -> Any
       }
   }
 };;
@@ -14,11 +14,11 @@ let x = { A = {
 ! x.A;;
 
 (* We fix one of the two issues found below. *)
-let x = { A = {
-    A : {
-      A : Any -> int.A .. Any -> Any
+let x = { type A = {
+    type A : {
+      type A : Any -> int.A .. Any -> Any
     } .. {
-        A : Any -> Any .. int.A -> Any
+        type A : Any -> Any .. int.A -> Any
       }
   }
 };;
@@ -26,11 +26,11 @@ let x = { A = {
 ! x.A;;
 
 (* Another way to fix it *)
-let x = { A = {
-    A : {
-      A : Any -> int.A .. Nothing -> Any
+let x = { type A = {
+    type A : {
+      type A : Any -> int.A .. Nothing -> Any
     } .. {
-        A : Any -> Any .. Nothing -> Any
+        type A : Any -> Any .. Nothing -> Any
       }
   }
 };;
@@ -38,11 +38,11 @@ let x = { A = {
 ! x.A;;
 
 (* We fix both. *)
-let x = { A = {
-    A : {
-      A : Any -> Any .. Any -> Any
+let x = { type A = {
+    type A : {
+      type A : Any -> Any .. Any -> Any
     } .. {
-        A : Any -> Any .. int.A -> Any
+        type A : Any -> Any .. int.A -> Any
       }
   }
 };;

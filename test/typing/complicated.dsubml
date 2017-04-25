@@ -2,13 +2,13 @@
    int.A -> string.A and Any (Top)
 *)
 let x = struct
-  A = sig A :> int.A -> string.A end
+  A = sig type A :> int.A -> string.A end
 end;;
 
 let f = lambda (z : x.A) z;;
 
 (* Trying to apply to a function a module which is a subtype of the argument. *)
-let y = struct A = int.A -> string.A end;;
+let y = struct type A = int.A -> string.A end;;
 f y;;
 
 (* Must fail because g is of type Any because (f y) is between int.A -> string.A
@@ -18,7 +18,7 @@ g zero;;
 *)
 
 (* Try with a supertype of the lower bound of the argument. *)
-let y = struct A = int.A -> Any end;;
+let y = struct type A = int.A -> Any end;;
 f y;;
 
 (* Must fail because g is of type Any because (f y) is between int.A -> Any
@@ -28,12 +28,20 @@ g zero;;
 *)
 
 let x = struct
-  A = sig A = sig A = int.A -> int.A end end
+  type A = sig
+    type A = sig
+      type A = int.A -> int.A
+    end
+  end
 end;;
 
-let y : x.A = struct A = sig A = int.A -> int.A end end;;
+let y : x.A = struct
+  type A = sig
+    type A = int.A -> int.A
+  end
+end;;
 
-let z : y.A = struct A = int.A -> int.A end;;
+let z : y.A = struct type A = int.A -> int.A end;;
 
 let f : z.A = succ;;
 

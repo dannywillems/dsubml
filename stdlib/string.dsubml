@@ -1,5 +1,5 @@
 (* The type of string *)
-let string : { A } = Unimplemented;;
+let string : sig type A end = Unimplemented;;
 
 (* Returns an empty string *)
 let empty_string : string.A = Unimplemented;;

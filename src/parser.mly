@@ -8,6 +8,7 @@
 %token STRUCT
 %token OBJ
 %token END
+%token TYPE
 
 %token SUBTYPE
 %token SUPERTYPE
@@ -175,7 +176,8 @@ rule_value:
         }
 
 rule_module_struct_content:
-| l = LABEL ;
+| TYPE ;
+  l = LABEL ;
   EQUAL ;
   typ = rule_typ {
             Grammar.TermTypeTag(l, typ)
@@ -201,7 +203,8 @@ rule_typ:
 | t = rule_typ_forall { t }
 
 rule_module_sig_content:
-| l = LABEL ;
+| TYPE ;
+  l = LABEL ;
   COLON ;
   s = rule_typ ;
   DOT ;
@@ -209,18 +212,22 @@ rule_module_sig_content:
   t = rule_typ {
           Grammar.TypeDeclaration(l, s, t)
         }
-| l = LABEL ;
+| TYPE ;
+  l = LABEL ;
   EQUAL ;
   s = rule_typ {
           Grammar.TypeDeclaration(l, s, s)
         }
-| l = LABEL { Grammar.TypeDeclaration(l, Grammar.TypeBottom, Grammar.TypeTop) }
-| l = LABEL ;
+| TYPE ;
+  l = LABEL { Grammar.TypeDeclaration(l, Grammar.TypeBottom, Grammar.TypeTop) }
+| TYPE ;
+  l = LABEL ;
   SUPERTYPE ;
   s = rule_typ {
           Grammar.TypeDeclaration(l, s, Grammar.TypeTop)
         }
-| l = LABEL ;
+| TYPE ;
+  l = LABEL ;
   SUBTYPE ;
   s = rule_typ {
           Grammar.TypeDeclaration(l, Grammar.TypeBottom, s)
